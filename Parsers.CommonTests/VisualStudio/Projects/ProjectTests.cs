@@ -19,7 +19,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting"));
             var path = Path.Combine(dir, "Basic.csproj");
 
             // Act
@@ -47,7 +47,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\TFM"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\TFM"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -70,7 +70,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\Files"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\Files"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -89,7 +89,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\References"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\References"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -109,7 +109,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\References"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\References"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -134,7 +134,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\ProjectReferences"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\ProjectReferences"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -152,7 +152,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\ProjectReferences"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\ProjectReferences"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -179,7 +179,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\PackageReferences"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\PackageReferences"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -197,7 +197,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\PackageReferences"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\PackageReferences"));
             var path = Path.Combine(dir, fileName);
 
             // Act
@@ -217,7 +217,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\ProjectsForTesting\SpecialChar"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\SpecialChar"));
             var path = Path.Combine(dir, "SpecialChar.csproj");
 
             // Act
@@ -237,7 +237,7 @@
         public void SLDisCompiler_ProjectFile_Load1()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Protocol\Solution1"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
             var path = Path.Combine(dir, "QAction_1", "QAction_1.csproj");
 
             var project = Project.Load(path, "QAction_1");
@@ -261,7 +261,7 @@
         public void SLDisCompiler_ProjectFile_Load2()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Protocol\Solution1"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
             var path = Path.Combine(dir, "QAction_2", "QAction_2.csproj");
 
             var project = Project.Load(path, "QAction_2");
@@ -289,7 +289,7 @@
         public void SLDisCompiler_ProjectFile_Load3()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Protocol\Solution1"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
             var path = Path.Combine(dir, "QAction_3", "QAction_3.csproj");
 
             var project = Project.Load(path, "QAction_3");

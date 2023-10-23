@@ -17,7 +17,7 @@
         public void ProtocolSolution_Solution_Load()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\Protocol\Solution1"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
             var path = Path.Combine(dir, "protocol.sln");
 
             var solution = ProtocolSolution.Load(path);

@@ -20,12 +20,10 @@
     <ProjectReference Include="..\Parsers.Protocol\Parsers.Protocol.csproj" />
   </ItemGroup>
 
-    <ItemGroup>
-        <Compile Remove="Protocol\Solution1\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="Protocol\Solution1\**" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Update="VisualStudio\TestFiles.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
     
 </Project>

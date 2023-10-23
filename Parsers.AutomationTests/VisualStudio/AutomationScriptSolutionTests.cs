@@ -21,7 +21,7 @@
         public void AutomationScriptCompiler_Solution1_Load()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Solution1"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution1"));
             var path = Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
@@ -56,7 +56,7 @@
         public void AutomationScriptCompiler_Solution2_Load()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Solution2"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution2"));
             var path = Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
@@ -91,7 +91,7 @@
         public void AutomationScriptCompiler_Solution3_Load()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Solution3"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution3"));
             var path = Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
@@ -127,7 +127,7 @@
         {
             // Arrange
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Solution4"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution4"));
             var path = Path.Combine(dir, "AutomationScript.sln");
 
             // Act
@@ -143,7 +143,7 @@
         public void AutomationScriptCompiler_Solution5_Load()
         {
             var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"..\..\..\VisualStudio\Solution5"));
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution5"));
             var path = Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);

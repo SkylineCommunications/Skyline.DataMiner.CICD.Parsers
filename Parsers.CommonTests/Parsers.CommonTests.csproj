@@ -6,27 +6,24 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="VisualStudio\ProjectsForTesting\**" />
-    <Compile Remove="VisualStudio\Protocol\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-      <Content Include="VisualStudio\ProjectsForTesting\**" />
-      <Content Include="VisualStudio\Protocol\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+	<ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Parsers.Common\Parsers.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="VisualStudio\TestFiles.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
