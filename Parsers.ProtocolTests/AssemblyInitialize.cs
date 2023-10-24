@@ -22,19 +22,13 @@
 	        {
 		        string dir = Path.Combine(Path.GetDirectoryName(zipFile), "TestFiles");
 
+		        if (Directory.Exists(dir))
+		        {
+			        // Has been extracted already before (different target framework run)
+		        }
+
 		        ZipFile.ExtractToDirectory(zipFile, dir);
 	        }
 		}
-
-        [AssemblyCleanup]
-        public static void AssemblyCleanup()
-        {
-	        var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-	        foreach (var testFilesDirectories in Directory.GetDirectories(baseDir, "TestFiles", SearchOption.AllDirectories))
-	        {
-				Directory.Delete(testFilesDirectories, true);
-	        }
-        }
 	}
 }
