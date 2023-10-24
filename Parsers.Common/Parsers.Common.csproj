@@ -36,7 +36,7 @@
 
     <ItemGroup>
         <PackageReference Include="NuGet.Frameworks" Version="6.7.0" />
-        <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.0.0.2" />
+        <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.0.1" />
         <PackageReference Include="System.Reflection.Metadata" Version="5.0.0" />
     </ItemGroup>
 
