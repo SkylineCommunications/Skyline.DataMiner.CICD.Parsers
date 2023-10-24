@@ -31,7 +31,7 @@
             Assert.AreEqual(path, solution.SolutionPath);
             Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
 
-            Assert.AreEqual(4, solution.Projects.Count());
+            Assert.AreEqual(3, solution.Projects.Count());
             Assert.AreEqual(2, solution.Scripts.Count());
 
             var script1 = solution.Scripts.FirstOrDefault(s => s.Script.Name == "Script_1").Script;
@@ -66,7 +66,7 @@
             Assert.AreEqual(path, solution.SolutionPath);
             Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
 
-            Assert.AreEqual(4, solution.Projects.Count());
+            Assert.AreEqual(3, solution.Projects.Count());
             Assert.AreEqual(2, solution.Scripts.Count());
 
             var script1 = solution.Scripts.FirstOrDefault(s => s.Script.Name == "Script_1").Script;
@@ -101,7 +101,7 @@
             Assert.AreEqual(path, solution.SolutionPath);
             Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
 
-            Assert.AreEqual(4, solution.Projects.Count());
+            Assert.AreEqual(3, solution.Projects.Count());
             Assert.AreEqual(2, solution.Scripts.Count());
 
             var script1 = solution.Scripts.FirstOrDefault(s => s.Script.Name == "Script_1").Script;
@@ -153,7 +153,7 @@
             Assert.AreEqual(path, solution.SolutionPath);
             Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
 
-            Assert.AreEqual(2, solution.Projects.Count());
+            Assert.AreEqual(1, solution.Projects.Count());
             Assert.AreEqual(1, solution.Scripts.Count());
 
             var script1 = solution.Scripts.FirstOrDefault(s => s.Script.Name == "New").Script;

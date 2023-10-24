@@ -16,7 +16,7 @@
 		    // This is needed because certain tools will look at all csproj files in the entire repository.
 
 		    var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			FileSystem.Instance.Directory.AllowWritesOnDirectory(baseDir);
+			//FileSystem.Instance.Directory.AllowWritesOnDirectory(baseDir);
 
 		    foreach (var zipFile in Directory.GetFiles(baseDir, "*.zip", SearchOption.AllDirectories))
 		    {
