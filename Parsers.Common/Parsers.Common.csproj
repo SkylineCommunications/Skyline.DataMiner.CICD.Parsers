@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -37,7 +37,7 @@
     <ItemGroup>
         <PackageReference Include="NuGet.Frameworks" Version="6.7.0" />
         <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.0.1" />
-        <PackageReference Include="System.Reflection.Metadata" Version="5.0.0" />
+        <PackageReference Include="System.Reflection.Metadata" Version="7.0.2" />
     </ItemGroup>
 
     <ItemGroup>
