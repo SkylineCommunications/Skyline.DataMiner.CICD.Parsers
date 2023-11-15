@@ -8,6 +8,7 @@
     using NuGet.Frameworks;
 
     using Skyline.DataMiner.CICD.FileSystem;
+    using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
 
     internal class SdkStyleParser : IProjectParser
     {
@@ -18,8 +19,7 @@
 
         internal SdkStyleParser(XDocument document, string projectDir)
         {
-            if(document == null) throw new ArgumentNullException(nameof(document));
-            this.document = document;
+	        this.document = document ?? throw new ArgumentNullException(nameof(document));
             this.projectDir = projectDir;
         }
 
@@ -150,19 +150,35 @@
 
         public string GetTargetFrameworkMoniker()
         {
-            var targetFrameworkElement = document
-                .Element("Project")
-                ?.Element("PropertyGroup")
-                .Element("TargetFramework");
+	        var propertyGroups = document
+	                             ?.Element("Project")
+	                             ?.Elements("PropertyGroup");
 
-            // SDK style projects support multi-targeting. Return first item.
-            string tfms = targetFrameworkElement.Value;
+	        if (propertyGroups == null)
+	        {
+		        throw new ParserException("No PropertyGroup tags found in the csproj file!");
+	        }
 
-            // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
-            string sdkStyleTfm = tfms.Split(';')[0];
-            var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
+	        foreach (XElement propertyGroup in propertyGroups)
+	        {
+		        var targetFrameworkElement = propertyGroup.Element("TargetFramework");
 
-            return tfm.DotNetFrameworkName;
+		        if (targetFrameworkElement == null)
+		        {
+			        continue;
+		        }
+
+		        // SDK style projects support multi-targeting. Return first item.
+		        string tfms = targetFrameworkElement.Value;
+
+		        // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
+		        string sdkStyleTfm = tfms.Split(';')[0];
+		        var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
+
+		        return tfm.DotNetFrameworkName;
+            }
+
+	        throw new ParserException("No TargetFramework tag found in the csproj file!");
         }
 
         public IEnumerable<ProjectFile> GetSharedProjectCompileFiles()
