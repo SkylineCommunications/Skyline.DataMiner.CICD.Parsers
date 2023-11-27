@@ -201,6 +201,7 @@
                 tokens.Enqueue(token);
             }
         }
+
         private void Step2_TokensToTree(Queue<Token> tokens, out XmlDocument root)
         {
             Stack<XmlNode> nodes = new Stack<XmlNode>();

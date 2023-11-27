@@ -52,14 +52,10 @@
             return Parse(xml);
         }
 
+        /// <inheritdoc />
         public override string GetXml()
         {
             var sb = new StringBuilder();
-
-            if (Declaration != null)
-            {
-                sb.Append(Declaration.GetXml());
-            }
 
             foreach (var c in Children)
             {
