@@ -1,6 +1,5 @@
 ﻿namespace Skyline.DataMiner.CICD.Parsers.Common.Xml
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -13,8 +12,6 @@
     /// </summary>
     public class XmlDocument : XmlContainer
     {
-        private string originalXml;
-
         public override bool IsSubtreeValid { get { return Children.All(x => x.IsSubtreeValid); } }
 
         public override int FirstCharOffset => 0;
@@ -46,9 +43,7 @@
         public static XmlDocument Parse(string xml)
         {
             Parser parser = new Parser(xml);
-            var doc = parser.Document;
-            doc.originalXml = xml;
-            return doc;
+            return parser.Document;
         }
 
         public static XmlDocument Load(string path)
@@ -57,11 +52,7 @@
             return Parse(xml);
         }
 
-        /// <summary>
-        /// Returns the XML of this node (and children).
-        /// In case you need to exact original XML, use <see cref="GetOriginalXml"/>.
-        /// </summary>
-        /// <returns>The XML.</returns>
+        /// <inheritdoc />
         public override string GetXml()
         {
             var sb = new StringBuilder();
@@ -72,15 +63,6 @@
             }
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Gets the original XML.
-        /// </summary>
-        /// <returns>The original XML.</returns>
-        public string GetOriginalXml()
-        {
-            return originalXml ?? String.Empty;
         }
 
         #endregion

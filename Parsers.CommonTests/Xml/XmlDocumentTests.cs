@@ -24,20 +24,5 @@
             // Check
             result.Should().BeEquivalentTo(expectedXml);
         }
-
-        [TestMethod]
-        public void XmlDocument_GetOriginalXml()
-        {
-            // Arrange
-            const string xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc></abc>";
-
-            XmlDocument document = XmlDocument.Parse(xml);
-
-            // Act
-            var result = document.GetOriginalXml();
-
-            // Check
-            result.Should().BeEquivalentTo(xml);
-        }
     }
 }
