@@ -1,7 +1,7 @@
 ﻿namespace Skyline.DataMiner.CICD.Parsers.Common.Xml
 {
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
@@ -13,9 +13,9 @@
     /// </summary>
     public class XmlDocument : XmlContainer
     {
-	    private string originalXml;
+        private string originalXml;
 
-	    public override bool IsSubtreeValid { get { return Children.All(x => x.IsSubtreeValid); } }
+        public override bool IsSubtreeValid { get { return Children.All(x => x.IsSubtreeValid); } }
 
         public override int FirstCharOffset => 0;
 
@@ -80,7 +80,7 @@
         /// <returns>The original XML.</returns>
         public string GetOriginalXml()
         {
-	        return originalXml ?? String.Empty;
+            return originalXml ?? String.Empty;
         }
 
         #endregion

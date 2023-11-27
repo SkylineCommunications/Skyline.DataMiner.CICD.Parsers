@@ -9,35 +9,35 @@
     [TestClass]
     public class XmlDocumentTests
     {
-	    [TestMethod]
-	    public void XmlDocument_GetXml()
-	    {
-		    // Arrange
-		    const string xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc></abc>";
-		    const string expectedXml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc />";
+        [TestMethod]
+        public void XmlDocument_GetXml()
+        {
+            // Arrange
+            const string xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc></abc>";
+            const string expectedXml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc />";
 
-		    XmlDocument document = XmlDocument.Parse(xml);
+            XmlDocument document = XmlDocument.Parse(xml);
 
-		    // Act
-			var result = document.GetXml();
+            // Act
+            var result = document.GetXml();
 
-		    // Check
-		    result.Should().BeEquivalentTo(expectedXml);
-	    }
+            // Check
+            result.Should().BeEquivalentTo(expectedXml);
+        }
 
-	    [TestMethod]
-	    public void XmlDocument_GetOriginalXml()
-	    {
-		    // Arrange
-		    const string xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc></abc>";
+        [TestMethod]
+        public void XmlDocument_GetOriginalXml()
+        {
+            // Arrange
+            const string xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?><abc></abc>";
 
-		    XmlDocument document = XmlDocument.Parse(xml);
+            XmlDocument document = XmlDocument.Parse(xml);
 
-		    // Act
-		    var result = document.GetOriginalXml();
+            // Act
+            var result = document.GetOriginalXml();
 
-		    // Check
-		    result.Should().BeEquivalentTo(xml);
-	    }
+            // Check
+            result.Should().BeEquivalentTo(xml);
+        }
     }
 }
