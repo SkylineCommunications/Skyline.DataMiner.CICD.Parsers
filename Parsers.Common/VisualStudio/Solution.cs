@@ -77,14 +77,14 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
         /// <exception cref="FileNotFoundException">The specified solution file does not exist.</exception>
         public static Solution Load(string solutionPath, ILogCollector logCollector = null)
         {
-	        if (String.IsNullOrWhiteSpace(solutionPath))
-	        {
-		        throw new ArgumentException("Value cannot be null or whitespace.", nameof(solutionPath));
-	        }
+            if (String.IsNullOrWhiteSpace(solutionPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(solutionPath));
+            }
 
             logCollector?.ReportDebug($"Creating solution from '{solutionPath}'.");
 
-	        return new Solution(solutionPath);
+            return new Solution(solutionPath);
         }
 
         /// <summary>
