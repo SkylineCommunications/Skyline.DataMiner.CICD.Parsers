@@ -6,6 +6,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
 {
     internal interface IProjectParser
     {
+        ProjectType GetProjectType();
+
         string GetAssemblyName();
 
         IEnumerable<Reference> GetReferences();
