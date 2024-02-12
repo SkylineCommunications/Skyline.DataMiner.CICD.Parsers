@@ -1,12 +1,12 @@
 ﻿namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
 {
     /// <summary>
-    /// Type of the project.
+    /// Style of the project.
     /// </summary>
-    public enum ProjectType
+    public enum ProjectStyle
     {
         /// <summary>
-        /// Unable to verify the type.
+        /// Unable to verify the style.
         /// </summary>
         Unknown = -1,
 

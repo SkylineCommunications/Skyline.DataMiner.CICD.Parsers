@@ -22,9 +22,9 @@
             this.projectDir = projectDir;
         }
 
-        public ProjectType GetProjectType()
+        public ProjectStyle GetProjectStyle()
         {
-            return ProjectType.Legacy;
+            return ProjectStyle.Legacy;
         }
 
         public string GetAssemblyName()

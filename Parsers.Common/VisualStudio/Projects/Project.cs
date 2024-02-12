@@ -122,9 +122,9 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         public IEnumerable<PackageReference> PackageReferences => _packageReferences;
 
         /// <summary>
-        /// Gets the type of the project.
+        /// Gets the style of the project.
         /// </summary>
-        public ProjectType ProjectType { get; private set; }
+        public ProjectStyle ProjectStyle { get; private set; }
 
         /// <summary>
         /// Loads the projects with the specified path.
@@ -157,7 +157,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             {
                 AssemblyName = name,
                 Path = path,
-                ProjectType = parser.GetProjectType(),
+                ProjectStyle = parser.GetProjectStyle(),
             };
 
             project._references.AddRange(parser.GetReferences());

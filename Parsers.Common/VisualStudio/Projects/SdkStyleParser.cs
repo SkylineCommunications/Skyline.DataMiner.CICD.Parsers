@@ -23,9 +23,9 @@
             this.projectDir = projectDir;
         }
 
-        public ProjectType GetProjectType()
+        public ProjectStyle GetProjectStyle()
         {
-            return ProjectType.Sdk;
+            return ProjectStyle.Sdk;
         }
 
         public string GetAssemblyName()
