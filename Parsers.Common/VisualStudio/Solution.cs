@@ -6,6 +6,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
     using System.Linq;
 
     using Skyline.DataMiner.CICD.FileSystem;
+    using Skyline.DataMiner.CICD.Loggers;
     using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects;
     using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.SolutionParser;
 
@@ -65,6 +66,26 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
         /// </summary>
         /// <value>The projects.</value>
         public IEnumerable<ProjectInSolution> Projects => SolutionItems.Values.OfType<ProjectInSolution>();
+
+        /// <summary>
+        /// Loads the specified solution path.
+        /// </summary>
+        /// <param name="solutionPath">The solution path.</param>
+        /// <param name="logCollector">The log collector.</param>
+        /// <returns>Parsed solution.</returns>
+        /// <exception cref="ArgumentException">Value cannot be null or whitespace. - solutionPath</exception>
+        /// <exception cref="FileNotFoundException">The specified solution file does not exist.</exception>
+        public static Solution Load(string solutionPath, ILogCollector logCollector = null)
+        {
+            if (String.IsNullOrWhiteSpace(solutionPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(solutionPath));
+            }
+
+            logCollector?.ReportDebug($"Creating solution from '{solutionPath}'.");
+
+            return new Solution(solutionPath);
+        }
 
         /// <summary>
         /// Loads the a project of the solution.

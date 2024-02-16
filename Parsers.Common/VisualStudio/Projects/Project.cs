@@ -122,6 +122,11 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         public IEnumerable<PackageReference> PackageReferences => _packageReferences;
 
         /// <summary>
+        /// Gets the style of the project.
+        /// </summary>
+        public ProjectStyle ProjectStyle { get; private set; }
+
+        /// <summary>
         /// Loads the projects with the specified path.
         /// </summary>
         /// <param name="path">The path of the project file to load.</param>
@@ -138,7 +143,6 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             string projectDir = FileSystem.Path.GetDirectoryName(path);
             var xmlContent = FileSystem.File.ReadAllText(path, Encoding.UTF8);
             var document = XDocument.Parse(xmlContent);
-            // var document = XDocument.Load(path);
 
             IProjectParser parser = ProjectParserFactory.GetParser(document, projectDir);
 
@@ -148,11 +152,12 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             {
                 name = assemblyName;
             }
-
+            
             var project = new Project
             {
                 AssemblyName = name,
-                Path = path
+                Path = path,
+                ProjectStyle = parser.GetProjectStyle(),
             };
 
             project._references.AddRange(parser.GetReferences());

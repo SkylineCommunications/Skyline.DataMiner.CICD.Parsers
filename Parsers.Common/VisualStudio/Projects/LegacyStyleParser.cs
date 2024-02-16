@@ -22,6 +22,11 @@
             this.projectDir = projectDir;
         }
 
+        public ProjectStyle GetProjectStyle()
+        {
+            return ProjectStyle.Legacy;
+        }
+
         public string GetAssemblyName()
         {
             return document

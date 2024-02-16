@@ -23,6 +23,11 @@
             this.projectDir = projectDir;
         }
 
+        public ProjectStyle GetProjectStyle()
+        {
+            return ProjectStyle.Sdk;
+        }
+
         public string GetAssemblyName()
         {
             // Note: by default this element is not present. If not present it is the same as the MSBuild project name (handled in higher level).
