@@ -31,6 +31,9 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
                 throw new FileNotFoundException("Could not find the specified solution file '" + path + "'.");
             }
 
+            // Make sure to use the full path
+            path = _fileSystem.Path.GetFullPath(path);
+
             SolutionPath = path;
             SolutionDirectory = _fileSystem.Path.GetDirectoryName(path);
 
@@ -88,7 +91,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
         }
 
         /// <summary>
-        /// Loads the a project of the solution.
+        /// Loads the project of the solution.
         /// </summary>
         /// <param name="projectInSolution">The project of the solution.</param>
         /// <returns>The loaded project.</returns>
