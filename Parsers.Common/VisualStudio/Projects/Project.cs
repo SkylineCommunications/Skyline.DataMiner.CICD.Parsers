@@ -141,6 +141,9 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 throw new FileNotFoundException("Could not find project file: " + path);
             }
 
+            // Make sure to use the full path
+            path = FileSystem.Path.GetFullPath(path);
+
             try
             {
                 string projectDir = FileSystem.Path.GetDirectoryName(path);

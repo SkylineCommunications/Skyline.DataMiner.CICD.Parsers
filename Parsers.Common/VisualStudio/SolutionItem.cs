@@ -63,7 +63,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
         /// Gets the absolute path of the item.
         /// </summary>
         /// <value>The absolute path of the item.</value>
-        public string AbsolutePath => _fileSystem.Path.Combine(Solution.SolutionDirectory, RelativePath);
+        public string AbsolutePath => _fileSystem.Path.GetFullPath(_fileSystem.Path.Combine(Solution.SolutionDirectory, RelativePath));
 
         /// <summary>
         /// Gets the parent item.
