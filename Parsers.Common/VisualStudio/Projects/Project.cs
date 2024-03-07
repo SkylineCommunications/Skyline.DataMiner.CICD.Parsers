@@ -9,6 +9,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
     using System.Xml.Linq;
 
     using Skyline.DataMiner.CICD.FileSystem;
+    using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
     using Skyline.DataMiner.CICD.Parsers.Common.Extensions;
 
     /// <summary>
@@ -140,38 +141,45 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 throw new FileNotFoundException("Could not find project file: " + path);
             }
 
-            string projectDir = FileSystem.Path.GetDirectoryName(path);
-            var xmlContent = FileSystem.File.ReadAllText(path, Encoding.UTF8);
-            var document = XDocument.Parse(xmlContent);
-
-            IProjectParser parser = ProjectParserFactory.GetParser(document, projectDir);
-
-            string name = projectName;
-            string assemblyName = parser.GetAssemblyName();
-            if (!String.IsNullOrEmpty(assemblyName))
+            try
             {
-                name = assemblyName;
+                string projectDir = FileSystem.Path.GetDirectoryName(path);
+                var xmlContent = FileSystem.File.ReadAllText(path, Encoding.UTF8);
+                var document = XDocument.Parse(xmlContent);
+
+                IProjectParser parser = ProjectParserFactory.GetParser(document, projectDir);
+
+                string name = projectName;
+                string assemblyName = parser.GetAssemblyName();
+                if (!String.IsNullOrEmpty(assemblyName))
+                {
+                    name = assemblyName;
+                }
+
+                var project = new Project
+                {
+                    AssemblyName = name,
+                    Path = path,
+                    ProjectStyle = parser.GetProjectStyle(),
+                };
+
+                project._references.AddRange(parser.GetReferences());
+                project._projectReferences.AddRange(parser.GetProjectReferences());
+                project._packageReferences.AddRange(parser.GetPackageReferences());
+
+                var files = parser.GetCompileFiles().ToList();
+
+                project._files.AddRange(files);
+                project._files.AddRange(parser.GetSharedProjectCompileFiles());
+
+                project.TargetFrameworkMoniker = parser.GetTargetFrameworkMoniker();
+
+                return project;
             }
-            
-            var project = new Project
+            catch (Exception e)
             {
-                AssemblyName = name,
-                Path = path,
-                ProjectStyle = parser.GetProjectStyle(),
-            };
-
-            project._references.AddRange(parser.GetReferences());
-            project._projectReferences.AddRange(parser.GetProjectReferences());
-            project._packageReferences.AddRange(parser.GetPackageReferences());
-
-            var files = parser.GetCompileFiles().ToList();
-
-            project._files.AddRange(files);
-            project._files.AddRange(parser.GetSharedProjectCompileFiles());
-
-            project.TargetFrameworkMoniker = parser.GetTargetFrameworkMoniker();
-
-            return project;
+                throw new ParserException($"Failed to load project '{projectName}' ({path}).", e);
+            }
         }
     }
 }

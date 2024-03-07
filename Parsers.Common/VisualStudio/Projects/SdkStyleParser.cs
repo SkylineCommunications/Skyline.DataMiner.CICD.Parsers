@@ -19,7 +19,7 @@
 
         internal SdkStyleParser(XDocument document, string projectDir)
         {
-	        this.document = document ?? throw new ArgumentNullException(nameof(document));
+            this.document = document ?? throw new ArgumentNullException(nameof(document));
             this.projectDir = projectDir;
         }
 
@@ -86,7 +86,7 @@
                 string name = path;
                 if (path.Contains("\\"))
                 {
-                    name = name.Substring(path.LastIndexOf("\\") + 1); 
+                    name = name.Substring(path.LastIndexOf("\\") + 1);
                 }
 
                 name = name.Replace(".csproj", "");
@@ -134,11 +134,13 @@
 
             var directories = FileSystem.Directory.EnumerateDirectories(projectDir);
 
-            foreach(var directory in directories)
+            foreach (var directory in directories)
             {
                 string directoryName = directory.Substring(relativePathOffset);
 
-                if(directoryName.Equals("bin", StringComparison.OrdinalIgnoreCase) || directoryName.Equals("obj", StringComparison.OrdinalIgnoreCase))
+                if (directoryName.Equals("bin", StringComparison.OrdinalIgnoreCase) ||
+                    directoryName.Equals("obj", StringComparison.OrdinalIgnoreCase) ||
+                    directoryName.Equals(".vs", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -155,35 +157,35 @@
 
         public string GetTargetFrameworkMoniker()
         {
-	        var propertyGroups = document
-	                             ?.Element("Project")
-	                             ?.Elements("PropertyGroup");
+            var propertyGroups = document
+                                 ?.Element("Project")
+                                 ?.Elements("PropertyGroup");
 
-	        if (propertyGroups == null)
-	        {
-		        throw new ParserException("No PropertyGroup tags found in the csproj file!");
-	        }
-
-	        foreach (XElement propertyGroup in propertyGroups)
-	        {
-		        var targetFrameworkElement = propertyGroup.Element("TargetFramework");
-
-		        if (targetFrameworkElement == null)
-		        {
-			        continue;
-		        }
-
-		        // SDK style projects support multi-targeting. Return first item.
-		        string tfms = targetFrameworkElement.Value;
-
-		        // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
-		        string sdkStyleTfm = tfms.Split(';')[0];
-		        var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
-
-		        return tfm.DotNetFrameworkName;
+            if (propertyGroups == null)
+            {
+                throw new ParserException("No PropertyGroup tags found in the csproj file!");
             }
 
-	        throw new ParserException("No TargetFramework tag found in the csproj file!");
+            foreach (XElement propertyGroup in propertyGroups)
+            {
+                var targetFrameworkElement = propertyGroup.Element("TargetFramework");
+
+                if (targetFrameworkElement == null)
+                {
+                    continue;
+                }
+
+                // SDK style projects support multi-targeting. Return first item.
+                string tfms = targetFrameworkElement.Value;
+
+                // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
+                string sdkStyleTfm = tfms.Split(';')[0];
+                var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
+
+                return tfm.DotNetFrameworkName;
+            }
+
+            throw new ParserException("No TargetFramework tag found in the csproj file!");
         }
 
         public IEnumerable<ProjectFile> GetSharedProjectCompileFiles()
