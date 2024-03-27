@@ -181,13 +181,9 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
                     }
                 }
             }
-            else if (p.TypeGuid == SolutionProjectTypeIDs.MsBuildProject || p.TypeGuid == SolutionProjectTypeIDs.NetCoreProject)
-            {
-                solutionItem = new ProjectInSolution(this, p);
-            }
             else
             {
-                return;
+                solutionItem = new ProjectInSolution(this, p);
             }
 
             AddSolutionItem(solutionItem.Guid, solutionItem);

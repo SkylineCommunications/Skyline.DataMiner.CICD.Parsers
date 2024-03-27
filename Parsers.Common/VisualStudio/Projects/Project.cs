@@ -5,6 +5,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Reflection.Metadata;
     using System.Text;
     using System.Xml.Linq;
 
@@ -136,9 +137,16 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         /// <exception cref="FileNotFoundException">The file specified in <paramref name="path"/> does not exist.</exception>
         public static Project Load(string path, string projectName)
         {
+            List<string> supportedExtensions = new List<string>() {".csproj", ".projitems", ".shproj" };
+
             if (!FileSystem.File.Exists(path))
             {
                 throw new FileNotFoundException("Could not find project file: " + path);
+            }
+
+            if (!supportedExtensions.Contains(FileSystem.Path.GetExtension(path)))
+            {
+                throw new NotImplementedException("Project Load does not support this project type.");
             }
 
             // Make sure to use the full path
