@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
@@ -194,7 +195,7 @@
 
                 if (!FileSystem.File.Exists(absolutePath))
                 {
-                    continue;
+                    throw new FileNotFoundException($"File '{relativePath}' was not found. Please add the file or remove it from the project.");
                 }
 
                 yield return new ProjectFile(relativePath, FileSystem.File.ReadAllText(FileSystem.Path.GetFullPath(absolutePath), Encoding.UTF8));

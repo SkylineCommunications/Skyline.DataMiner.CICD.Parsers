@@ -60,7 +60,6 @@
         [TestMethod]
         [DataRow("Files_Valid.csproj", 2)]
         [DataRow("Files_NoFiles.csproj", 0)]
-        [DataRow("Files_UnknownFile.csproj", 0)]
         [DataRow("SharedProject.projitems", 2)]
         [DataRow("SharedProject.shproj", 2)]
         [DataRow("Files_ValidSharedProject.csproj", 4)]

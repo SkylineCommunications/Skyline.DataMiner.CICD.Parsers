@@ -50,7 +50,8 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Skyline.DataMiner.CICD.Parsers.Protocol" />
         <InternalsVisibleTo Include="Assemblers.AutomationTests" />
-        <InternalsVisibleTo Include="Assemblers.ProtocolTests" />
+      <InternalsVisibleTo Include="Assemblers.ProtocolTests" />
+      <InternalsVisibleTo Include="Parsers.CommonTests" />
     </ItemGroup>
 
 </Project>
