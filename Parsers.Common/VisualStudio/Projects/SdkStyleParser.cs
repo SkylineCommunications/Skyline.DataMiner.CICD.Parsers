@@ -188,6 +188,32 @@
             throw new ParserException("No TargetFramework tag found in the csproj file!");
         }
 
+        public DataMinerProjectType? GetDataMinerProjectType()
+        {
+            var propertyGroups = document
+                                 ?.Element("Project")
+                                 ?.Elements("PropertyGroup");
+
+            if (propertyGroups == null)
+            {
+                throw new ParserException("No PropertyGroup tags found in the csproj file!");
+            }
+
+            foreach (XElement propertyGroup in propertyGroups)
+            {
+                var typeElement = propertyGroup.Element("DataMinerType");
+
+                if (typeElement == null)
+                {
+                    continue;
+                }
+
+                return DataMinerProjectTypeConverter.ToEnum(typeElement.Value);
+            }
+
+            return null;
+        }
+
         public IEnumerable<ProjectFile> GetSharedProjectCompileFiles()
         {
             IEnumerable<XElement> imports = document
