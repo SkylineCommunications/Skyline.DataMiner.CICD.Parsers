@@ -191,22 +191,16 @@
         public DataMinerProjectType? GetDataMinerProjectType()
         {
             var projectExtensions = document
-                                 ?.Element("Project")
-                                 ?.Elements("ProjectExtensions")
-                                 .ToList();
+                                    ?.Element("Project")
+                                    ?.Element("ProjectExtensions");
 
             if (projectExtensions == null)
             {
                 // No ProjectExtensions found.
                 return null;
             }
-
-            if (projectExtensions.Count > 1)
-            {
-                throw new ParserException("Only one ProjectExtensions tag is allowed in the csproj file!");
-            }
-
-            var typeElement = projectExtensions[0].Element("VisualStudio")?.Element("UserProperties")?.Attribute("DataMinerType");
+            
+            var typeElement = projectExtensions.Element("VisualStudio")?.Element("UserProperties")?.Attribute("DataMinerType");
 
             if (typeElement == null)
             {
