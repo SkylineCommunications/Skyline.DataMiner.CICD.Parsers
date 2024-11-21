@@ -38,7 +38,7 @@
     /// </summary>
     public static class DataMinerProjectTypeConverter
     {
-        private static Dictionary<string, DataMinerProjectType> stringToEnum = new Dictionary<string, DataMinerProjectType>()
+        private static readonly Dictionary<string, DataMinerProjectType> StringToEnum = new Dictionary<string, DataMinerProjectType>
         {
             ["Package"] = DataMinerProjectType.Package,
             ["AutomationScript"] = DataMinerProjectType.AutomationScript,
@@ -47,7 +47,7 @@
             ["UserDefinedApi"] = DataMinerProjectType.UserDefinedApi,
         };
 
-        private static Dictionary<DataMinerProjectType, string> enumToString = new Dictionary<DataMinerProjectType, string>()
+        private static readonly Dictionary<DataMinerProjectType, string> EnumToString = new Dictionary<DataMinerProjectType, string>
         {
             [DataMinerProjectType.Package] = "Package",
             [DataMinerProjectType.AutomationScript] = "AutomationScript",
@@ -63,7 +63,7 @@
         /// <returns>Converted value when successful, null when not.</returns>
         public static DataMinerProjectType? ToEnum(string value)
         {
-            if (stringToEnum.TryGetValue(value, out DataMinerProjectType t))
+            if (StringToEnum.TryGetValue(value, out DataMinerProjectType t))
             {
                 return t;
             }
@@ -78,7 +78,7 @@
         /// <returns>Converted value when successful, null when not.</returns>
         public static string ToString(DataMinerProjectType value)
         {
-            if (enumToString.TryGetValue(value, out string s))
+            if (EnumToString.TryGetValue(value, out string s))
             {
                 return s;
             }
