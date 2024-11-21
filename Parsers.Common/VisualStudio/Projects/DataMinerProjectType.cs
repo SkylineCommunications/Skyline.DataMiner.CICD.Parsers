@@ -18,9 +18,19 @@
         AutomationScript,
 
         /// <summary>
+        /// Represents a DataMiner Automation Script project that will be a library.
+        /// </summary>
+        AutomationScriptLibrary,
+
+        /// <summary>
         /// Represents a DataMiner Ad Hoc Data Source project.
         /// </summary>
-        AdHocDataSource
+        AdHocDataSource,
+
+        /// <summary>
+        /// Represents a DataMiner User-Defined API project.
+        /// </summary>
+        UserDefinedApi,
     }
 
     /// <summary>
@@ -32,14 +42,18 @@
         {
             ["Package"] = DataMinerProjectType.Package,
             ["AutomationScript"] = DataMinerProjectType.AutomationScript,
-            ["ad-hoc-data-source"] = DataMinerProjectType.AdHocDataSource
+            ["AutomationScriptLibrary"] = DataMinerProjectType.AutomationScriptLibrary,
+            ["AdHocDataSource"] = DataMinerProjectType.AdHocDataSource,
+            ["UserDefinedApi"] = DataMinerProjectType.UserDefinedApi,
         };
 
         private static Dictionary<DataMinerProjectType, string> enumToString = new Dictionary<DataMinerProjectType, string>()
         {
             [DataMinerProjectType.Package] = "Package",
             [DataMinerProjectType.AutomationScript] = "AutomationScript",
-            [DataMinerProjectType.AdHocDataSource] = "ad-hoc-data-source"
+            [DataMinerProjectType.AutomationScriptLibrary] = "AutomationScriptLibrary",
+            [DataMinerProjectType.AdHocDataSource] = "AdHocDataSource",
+            [DataMinerProjectType.UserDefinedApi] = "UserDefinedApi",
         };
 
         /// <summary>
