@@ -188,6 +188,29 @@
             throw new ParserException("No TargetFramework tag found in the csproj file!");
         }
 
+        public DataMinerProjectType? GetDataMinerProjectType()
+        {
+            var projectExtensions = document
+                                    ?.Element("Project")
+                                    ?.Element("ProjectExtensions");
+
+            if (projectExtensions == null)
+            {
+                // No ProjectExtensions found.
+                return null;
+            }
+            
+            var typeElement = projectExtensions.Element("VisualStudio")?.Element("UserProperties")?.Attribute("DataMinerType");
+
+            if (typeElement == null)
+            {
+                // Tags/attribute does not exist.
+                return null;
+            }
+
+            return DataMinerProjectTypeConverter.ToEnum(typeElement?.Value);
+        }
+
         public IEnumerable<ProjectFile> GetSharedProjectCompileFiles()
         {
             IEnumerable<XElement> imports = document
