@@ -208,6 +208,12 @@
 
             var typeElement = projectExtensions[0].Element("VisualStudio")?.Element("UserProperties")?.Attribute("DataMinerType");
 
+            if (typeElement == null)
+            {
+                // Tags/attribute does not exist.
+                return null;
+            }
+
             return DataMinerProjectTypeConverter.ToEnum(typeElement?.Value);
         }
 

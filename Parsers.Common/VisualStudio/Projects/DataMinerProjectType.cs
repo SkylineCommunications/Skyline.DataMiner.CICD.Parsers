@@ -8,6 +8,11 @@
     public enum DataMinerProjectType
     {
         /// <summary>
+        /// Unknown value.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
         /// Represents a DataMiner Install Package project.
         /// </summary>
         Package,
@@ -57,18 +62,18 @@
         };
 
         /// <summary>
-        /// Tries to convert the specified value to the <see cref="DataMinerProjectType"/> enum. Will return null when unable to convert to enum.
+        /// Tries to convert the specified value to the <see cref="DataMinerProjectType"/> enum.
         /// </summary>
         /// <param name="value">Value to convert.</param>
-        /// <returns>Converted value when successful, null when not.</returns>
-        public static DataMinerProjectType? ToEnum(string value)
+        /// <returns>Converted value when successful, Unknown when not.</returns>
+        public static DataMinerProjectType ToEnum(string value)
         {
             if (StringToEnum.TryGetValue(value, out DataMinerProjectType t))
             {
                 return t;
             }
 
-            return null;
+            return DataMinerProjectType.Unknown;
         }
 
         /// <summary>
