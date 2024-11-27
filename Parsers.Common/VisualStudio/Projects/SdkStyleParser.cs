@@ -190,25 +190,29 @@
 
         public DataMinerProjectType? GetDataMinerProjectType()
         {
-            var projectExtensions = document
-                                    ?.Element("Project")
-                                    ?.Element("ProjectExtensions");
+            var propertyGroups = document
+                                 ?.Element("Project")
+                                 ?.Elements("PropertyGroup");
 
-            if (projectExtensions == null)
+            if (propertyGroups == null)
             {
-                // No ProjectExtensions found.
-                return null;
-            }
-            
-            var typeElement = projectExtensions.Element("VisualStudio")?.Element("UserProperties")?.Attribute("DataMinerType");
-
-            if (typeElement == null)
-            {
-                // Tags/attribute does not exist.
-                return null;
+                throw new ParserException("No PropertyGroup tags found in the csproj file!");
             }
 
-            return DataMinerProjectTypeConverter.ToEnum(typeElement?.Value);
+            foreach (XElement propertyGroup in propertyGroups)
+            {
+                var typeElement = propertyGroup.Element("DataMinerType");
+
+                if (typeElement == null)
+                {
+                    continue;
+                }
+
+                return DataMinerProjectTypeConverter.ToEnum(typeElement.Value);
+            }
+
+            // Tag does not exist.
+            return null;
         }
 
         public IEnumerable<ProjectFile> GetSharedProjectCompileFiles()
