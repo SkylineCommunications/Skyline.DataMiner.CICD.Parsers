@@ -99,6 +99,11 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         public string TargetFrameworkMoniker { get; private set; }
 
         /// <summary>
+        /// Gets the DataMiner project type.
+        /// </summary>
+        public DataMinerProjectType? DataMinerProjectType { get; set; }
+
+        /// <summary>
         /// Gets the project files.
         /// </summary>
         /// <value>The project files.</value>
@@ -176,6 +181,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 project._files.AddRange(parser.GetSharedProjectCompileFiles());
 
                 project.TargetFrameworkMoniker = parser.GetTargetFrameworkMoniker();
+                project.DataMinerProjectType = parser.GetDataMinerProjectType();
 
                 return project;
             }
