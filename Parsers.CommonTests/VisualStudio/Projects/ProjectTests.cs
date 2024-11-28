@@ -27,7 +27,35 @@
 
             // Assert
             result.Should().NotBeNull();
-            result.AssemblyName.Should().BeEquivalentTo("Basic");
+            result.AssemblyName.Should().BeEquivalentTo("Basic2");
+            result.ProjectName.Should().BeEquivalentTo("Basic");
+            result.ProjectDirectory.Should().BeEquivalentTo(dir);
+            result.DataMinerProjectType.Should().BeNull();
+            result.Path.Should().BeEquivalentTo(path);
+            result.References.Should().NotBeNullOrEmpty();
+            result.PackageReferences.Should().NotBeNullOrEmpty();
+            result.Files.Should().NotBeNullOrEmpty();
+            result.ProjectReferences.Should().NotBeNullOrEmpty();
+            result.TargetFrameworkMoniker.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [TestMethod]
+        public void Load_GeneralValid_LoadViaPathOnly()
+        {
+            // Arrange
+            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting"));
+            var path = Path.Combine(dir, "Basic.csproj");
+
+            // Act
+            var result = Project.Load(path);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.AssemblyName.Should().BeEquivalentTo("Basic2");
+            result.ProjectName.Should().BeEquivalentTo("Basic");
+            result.ProjectDirectory.Should().BeEquivalentTo(dir);
+            result.DataMinerProjectType.Should().BeNull();
             result.Path.Should().BeEquivalentTo(path);
             result.References.Should().NotBeNullOrEmpty();
             result.PackageReferences.Should().NotBeNullOrEmpty();

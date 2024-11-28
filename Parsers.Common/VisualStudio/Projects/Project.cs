@@ -83,7 +83,16 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         /// <summary>
         /// Gets the project name.
         /// </summary>
-        /// <value>The project name.</value>
+        public string ProjectName { get; set; }
+
+        /// <summary>
+        /// Gets the project directory.
+        /// </summary>
+        public string ProjectDirectory { get; set; }
+
+        /// <summary>
+        /// Gets the assembly name.
+        /// </summary>
         public string AssemblyName { get; private set; }
 
         /// <summary>
@@ -104,9 +113,9 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         public DataMinerProjectType? DataMinerProjectType { get; set; }
 
         /// <summary>
-        /// Gets the project files.
+        /// Gets the project C# files.
         /// </summary>
-        /// <value>The project files.</value>
+        /// <value>The project C# files.</value>
         public IEnumerable<ProjectFile> Files => _files;
 
         /// <summary>
@@ -139,6 +148,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         /// <param name="projectName">The name of the project.</param>
         /// <returns>The loaded project.</returns>
         /// <exception cref="FileNotFoundException">The file specified in <paramref name="path"/> does not exist.</exception>
+        [Obsolete("Use the Load method with only the path argument.")]
         public static Project Load(string path, string projectName)
         {
             if (!FileSystem.File.Exists(path))
@@ -169,6 +179,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                     AssemblyName = name,
                     Path = path,
                     ProjectStyle = parser.GetProjectStyle(),
+                    ProjectDirectory = projectDir,
+                    ProjectName = projectName,
                 };
 
                 project._references.AddRange(parser.GetReferences());
@@ -189,6 +201,27 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             {
                 throw new ParserException($"Failed to load project '{projectName}' ({path}).", e);
             }
+        }
+
+        /// <summary>
+        /// Loads the projects with the specified path.
+        /// </summary>
+        /// <param name="path">The path of the project file to load.</param>
+        /// <returns>The loaded project.</returns>
+        /// <exception cref="FileNotFoundException">The file specified in <paramref name="path"/> does not exist.</exception>
+        public static Project Load(string path)
+        {
+            if (!FileSystem.File.Exists(path))
+            {
+                throw new FileNotFoundException("Could not find project file: " + path);
+            }
+
+            // Make sure to use the full path
+            path = FileSystem.Path.GetFullPath(path);
+
+            string projectName = FileSystem.Path.GetFileNameWithoutExtension(path);
+
+            return Load(path, projectName);
         }
     }
 }
