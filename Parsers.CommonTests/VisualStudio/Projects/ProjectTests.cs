@@ -1,4 +1,5 @@
-﻿namespace Parsers.CommonTests.VisualStudio.Projects
+﻿#pragma warning disable CS0618 // Type or member is obsolete
+namespace Parsers.CommonTests.VisualStudio.Projects
 {
     using System;
     using System.IO;

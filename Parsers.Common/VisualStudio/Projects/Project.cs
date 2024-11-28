@@ -151,6 +151,17 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         [Obsolete("Use the Load method with only the path argument.")]
         public static Project Load(string path, string projectName)
         {
+            return Load(path);
+        }
+
+        /// <summary>
+        /// Loads the projects with the specified path.
+        /// </summary>
+        /// <param name="path">The path of the project file to load.</param>
+        /// <returns>The loaded project.</returns>
+        /// <exception cref="FileNotFoundException">The file specified in <paramref name="path"/> does not exist.</exception>
+        public static Project Load(string path)
+        {
             if (!FileSystem.File.Exists(path))
             {
                 throw new FileNotFoundException("Could not find project file: " + path);
@@ -159,9 +170,11 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             // Make sure to use the full path
             path = FileSystem.Path.GetFullPath(path);
 
+            string projectDir = FileSystem.Path.GetDirectoryName(path);
+            string projectName = FileSystem.Path.GetFileNameWithoutExtension(path);
+
             try
             {
-                string projectDir = FileSystem.Path.GetDirectoryName(path);
                 var xmlContent = FileSystem.File.ReadAllText(path, Encoding.UTF8);
                 var document = XDocument.Parse(xmlContent);
 
@@ -201,27 +214,6 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             {
                 throw new ParserException($"Failed to load project '{projectName}' ({path}).", e);
             }
-        }
-
-        /// <summary>
-        /// Loads the projects with the specified path.
-        /// </summary>
-        /// <param name="path">The path of the project file to load.</param>
-        /// <returns>The loaded project.</returns>
-        /// <exception cref="FileNotFoundException">The file specified in <paramref name="path"/> does not exist.</exception>
-        public static Project Load(string path)
-        {
-            if (!FileSystem.File.Exists(path))
-            {
-                throw new FileNotFoundException("Could not find project file: " + path);
-            }
-
-            // Make sure to use the full path
-            path = FileSystem.Path.GetFullPath(path);
-
-            string projectName = FileSystem.Path.GetFileNameWithoutExtension(path);
-
-            return Load(path, projectName);
         }
     }
 }
