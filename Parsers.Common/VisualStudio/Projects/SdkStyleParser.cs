@@ -168,7 +168,7 @@
 
             foreach (XElement propertyGroup in propertyGroups)
             {
-                var targetFrameworkElement = propertyGroup.Element("TargetFramework");
+                var targetFrameworkElement = propertyGroup.Element("TargetFramework") ?? propertyGroup.Element("TargetFrameworks");
 
                 if (targetFrameworkElement == null)
                 {
