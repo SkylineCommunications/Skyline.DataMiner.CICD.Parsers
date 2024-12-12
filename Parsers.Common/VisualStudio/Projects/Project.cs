@@ -5,7 +5,6 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
-    using System.Reflection.Metadata;
     using System.Text;
     using System.Xml.Linq;
 
