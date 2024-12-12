@@ -24,7 +24,18 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
         /// </summary>
         /// <param name="path">The path to the solution file.</param>
         /// <exception cref="FileNotFoundException">The specified solution file does not exist.</exception>
-        protected Solution(string path)
+        protected Solution(string path) : this(path, false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Solution"/> class with the specified path.
+        /// Not all projects will be able to be loaded with the <see cref="LoadProject"/> method.
+        /// </summary>
+        /// <param name="path">The path to the solution file.</param>
+        /// <param name="allowAll">Allow all projects, regardless of type.</param>
+        /// <exception cref="FileNotFoundException">The specified solution file does not exist.</exception>
+        private Solution(string path, bool allowAll)
         {
             if (!_fileSystem.File.Exists(path))
             {
@@ -37,7 +48,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             SolutionPath = path;
             SolutionDirectory = _fileSystem.Path.GetDirectoryName(path);
 
-            Load();
+            Load(allowAll);
         }
 
         /// <summary>
@@ -91,16 +102,43 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
         }
 
         /// <summary>
+        /// Loads the specified solution path.
+        /// </summary>
+        /// <param name="solutionPath">The solution path.</param>
+        /// <param name="allowAll">Allow all projects, regardless of type.</param>
+        /// <param name="logCollector">The log collector.</param>
+        /// <returns>Parsed solution.</returns>
+        /// <exception cref="ArgumentException">Value cannot be null or whitespace. - solutionPath</exception>
+        /// <exception cref="FileNotFoundException">The specified solution file does not exist.</exception>
+        public static Solution Load(string solutionPath, bool allowAll, ILogCollector logCollector = null)
+        {
+            if (String.IsNullOrWhiteSpace(solutionPath))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(solutionPath));
+            }
+
+            logCollector?.ReportDebug($"Creating solution from '{solutionPath}'.");
+
+            return new Solution(solutionPath, allowAll);
+        }
+
+        /// <summary>
         /// Loads the project of the solution.
         /// </summary>
         /// <param name="projectInSolution">The project of the solution.</param>
         /// <returns>The loaded project.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="projectInSolution"/> is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">Specified project is not supported to be loaded.</exception>
         public Project LoadProject(ProjectInSolution projectInSolution)
         {
             if (projectInSolution is null)
             {
                 throw new ArgumentNullException(nameof(projectInSolution));
+            }
+
+            if (!Project.SupportedProjectExtensions.Contains(_fileSystem.Path.GetExtension(projectInSolution.AbsolutePath)))
+            {
+                throw new NotSupportedException($"Project {projectInSolution.Name} is not supported to be loaded.");
             }
 
             if (!_loadedProjects.TryGetValue(projectInSolution.Guid, out Project project))
@@ -133,7 +171,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             _solutionItems[guid] = item;
         }
 
-        private void Load()
+        private void Load(bool allowAll)
         {
             var content = _fileSystem.File.ReadAllText(SolutionPath);
             var parser = new Parser(content);
@@ -143,7 +181,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
 
             foreach (var p in projects)
             {
-                ProcessProject(p);
+                ProcessProject(p, allowAll);
             }
 
             var nestedProjects = globalSections.FirstOrDefault(section => String.Equals(section.Name, "NestedProjects", StringComparison.OrdinalIgnoreCase));
@@ -163,7 +201,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             }
         }
 
-        private void ProcessProject(SolutionParser.Model.SlnProject p)
+        private void ProcessProject(SolutionParser.Model.SlnProject p, bool allowAll)
         {
             SolutionItem solutionItem;
 
@@ -181,8 +219,14 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
                     }
                 }
             }
+            else if (allowAll)
+            {
+                // Allow all projects to be added
+                solutionItem = new ProjectInSolution(this, p);
+            }
             else if (p.TypeGuid == SolutionProjectTypeIDs.MsBuildProject || p.TypeGuid == SolutionProjectTypeIDs.NetCoreProject)
             {
+                // Allow only the C# projects that can be loaded with Project.Load
                 solutionItem = new ProjectInSolution(this, p);
             }
             else

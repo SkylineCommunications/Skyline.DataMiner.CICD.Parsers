@@ -81,6 +81,16 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         }
 
         /// <summary>
+        /// Gets the type of projects that are supported to be loaded.
+        /// </summary>
+        internal static readonly string[] SupportedProjectExtensions =
+        {
+            ".csproj",
+            ".projitems",
+            ".shproj"
+        };
+
+        /// <summary>
         /// Gets the project name.
         /// </summary>
         /// <value>The project name.</value>
@@ -144,6 +154,12 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             // Make sure to use the full path
             path = FileSystem.Path.GetFullPath(path);
 
+            string extension = FileSystem.Path.GetExtension(path);
+            if (!SupportedProjectExtensions.Contains(extension))
+            {
+                throw new NotImplementedException("Project Load does not support this project type.");
+            }
+            
             try
             {
                 string projectDir = FileSystem.Path.GetDirectoryName(path);
