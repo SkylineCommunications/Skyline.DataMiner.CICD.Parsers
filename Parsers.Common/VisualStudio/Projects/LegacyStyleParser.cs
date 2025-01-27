@@ -235,6 +235,8 @@
             return Constants.TargetFramework462;
         }
 
+        public DataMinerProjectType? GetDataMinerProjectType() => null; // We don't support this in legacy style
+
         public IEnumerable<ProjectFile> GetSharedProjectCompileFiles()
         {
             IEnumerable<XElement> imports = document
