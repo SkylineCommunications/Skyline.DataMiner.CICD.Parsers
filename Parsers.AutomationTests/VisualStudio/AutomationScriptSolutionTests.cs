@@ -1,7 +1,6 @@
 ﻿namespace Parsers.AutomationTests.VisualStudio
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
 
@@ -9,6 +8,7 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Automation.VisualStudio;
     using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
 
@@ -20,16 +20,16 @@
         [TestMethod]
         public void AutomationScriptCompiler_Solution1_Load()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution1"));
-            var path = Path.Combine(dir, "AutomationScript.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution1"));
+            var path = FileSystem.Instance.Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
 
             Assert.IsInstanceOfType(solution, typeof(AutomationScriptSolution));
 
             Assert.AreEqual(path, solution.SolutionPath);
-            Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
+            Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
 
             Assert.AreEqual(3, solution.Projects.Count());
             Assert.AreEqual(2, solution.Scripts.Count());
@@ -55,16 +55,16 @@
         [TestMethod]
         public void AutomationScriptCompiler_Solution2_Load()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution2"));
-            var path = Path.Combine(dir, "AutomationScript.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution2"));
+            var path = FileSystem.Instance.Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
 
             Assert.IsInstanceOfType(solution, typeof(AutomationScriptSolution));
 
             Assert.AreEqual(path, solution.SolutionPath);
-            Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
+            Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
 
             Assert.AreEqual(3, solution.Projects.Count());
             Assert.AreEqual(2, solution.Scripts.Count());
@@ -90,16 +90,16 @@
         [TestMethod]
         public void AutomationScriptCompiler_Solution3_Load()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution3"));
-            var path = Path.Combine(dir, "AutomationScript.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution3"));
+            var path = FileSystem.Instance.Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
 
             Assert.IsInstanceOfType(solution, typeof(AutomationScriptSolution));
 
             Assert.AreEqual(path, solution.SolutionPath);
-            Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
+            Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
 
             Assert.AreEqual(3, solution.Projects.Count());
             Assert.AreEqual(2, solution.Scripts.Count());
@@ -126,9 +126,9 @@
         public void AutomationScriptCompiler_Solution4_Load()
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution4"));
-            var path = Path.Combine(dir, "AutomationScript.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution4"));
+            var path = FileSystem.Instance.Path.Combine(dir, "AutomationScript.sln");
 
             // Act
             Action act = () => AutomationScriptSolution.Load(path);
@@ -142,16 +142,16 @@
         [TestMethod]
         public void AutomationScriptCompiler_Solution5_Load()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution5"));
-            var path = Path.Combine(dir, "AutomationScript.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Solution5"));
+            var path = FileSystem.Instance.Path.Combine(dir, "AutomationScript.sln");
 
             var solution = AutomationScriptSolution.Load(path);
 
             Assert.IsInstanceOfType(solution, typeof(AutomationScriptSolution));
 
             Assert.AreEqual(path, solution.SolutionPath);
-            Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
+            Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
 
             Assert.AreEqual(1, solution.Projects.Count());
             Assert.AreEqual(1, solution.Scripts.Count());

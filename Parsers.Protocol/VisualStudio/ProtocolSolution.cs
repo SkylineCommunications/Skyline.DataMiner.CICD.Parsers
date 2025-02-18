@@ -11,6 +11,7 @@
     using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects;
     using Skyline.DataMiner.CICD.Parsers.Common.Xml;
     using Skyline.DataMiner.CICD.Parsers.Protocol.Xml.QActions;
+    using Skyline.DataMiner.CICD.FileSystem;
 
     /// <summary>
     /// Represents a connector solution.
@@ -60,7 +61,7 @@
             if (solutionPath == null) throw new ArgumentNullException(nameof(solutionPath));
             if (String.IsNullOrWhiteSpace(solutionPath)) throw new ArgumentNullException(nameof(solutionPath), "Solution path is invalid.");
 
-            if (!File.Exists(solutionPath)) throw new FileNotFoundException($"The specified solution path '{solutionPath}' does not exist.");
+            if (!FileSystem.Instance.File.Exists(solutionPath)) throw new FileNotFoundException($"The specified solution path '{solutionPath}' does not exist.");
 
             return new ProtocolSolution(solutionPath, logCollector);
         }
@@ -75,7 +76,7 @@
 
             var protocolFile = solutionItems.Files.FirstOrDefault(f => String.Equals(f.FileName, "protocol.xml", StringComparison.OrdinalIgnoreCase));
 
-            if (protocolFile != null && File.Exists(protocolFile.AbsolutePath))
+            if (protocolFile != null && FileSystem.Instance.File.Exists(protocolFile.AbsolutePath))
             {
                 ProtocolDocument = XmlDocument.Load(protocolFile.AbsolutePath);
             }
@@ -127,8 +128,8 @@
             {
                 string fileName = file.Name;
 
-                if (!String.Equals(Path.GetExtension(fileName), ".cs", StringComparison.OrdinalIgnoreCase)
-                    || String.Equals(Path.GetFileName(fileName), "AssemblyInfo.cs", StringComparison.OrdinalIgnoreCase))
+                if (!String.Equals(FileSystem.Instance.Path.GetExtension(fileName), ".cs", StringComparison.OrdinalIgnoreCase)
+                    || String.Equals(FileSystem.Instance.Path.GetFileName(fileName), "AssemblyInfo.cs", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }

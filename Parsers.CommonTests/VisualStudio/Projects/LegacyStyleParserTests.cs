@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Xml.Linq;
 
@@ -10,6 +11,7 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects;
 
     [TestClass]
@@ -19,11 +21,13 @@
         public void GetCompileFilesTest()
         {
             // Arrange
-            string path = Path.GetFullPath(@".\VisualStudio\TestFiles\ProjectsForTesting\Files\Files_UnknownFile.csproj");
-            string projectDir = Path.GetDirectoryName(path);
-            var xmlContent = File.ReadAllText(path, Encoding.UTF8);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\Files"));
+            var path = FileSystem.Instance.Path.Combine(dir, "Files_UnknownFile.csproj");
+
+            var xmlContent = FileSystem.Instance.File.ReadAllText(path, Encoding.UTF8);
             var document = XDocument.Parse(xmlContent);
-            LegacyStyleParser legacyStyleParser = new LegacyStyleParser(document, projectDir);
+            LegacyStyleParser legacyStyleParser = new LegacyStyleParser(document, dir);
 
             // Act
             Action action = () => _ = legacyStyleParser.GetCompileFiles().ToList();

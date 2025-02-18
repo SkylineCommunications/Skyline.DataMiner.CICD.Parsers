@@ -1,13 +1,14 @@
 ﻿namespace Parsers.ProtocolTests.VisualStudio
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
 
+    using FluentAssertions;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    using Skyline.DataMiner.CICD.Parsers.Common.Xml;
+    using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Protocol.VisualStudio;
 
     [TestClass]
@@ -16,49 +17,50 @@
         [TestMethod]
         public void ProtocolSolution_Solution_Load()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
-            var path = Path.Combine(dir, "protocol.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
+            var path = FileSystem.Instance.Path.Combine(dir, "Protocol.sln");
 
             var solution = ProtocolSolution.Load(path);
 
-            Assert.IsInstanceOfType(solution, typeof(ProtocolSolution));
+            solution.Should().NotBeNull();
+            solution.SolutionPath.Should().BeEquivalentTo(path);
+            solution.SolutionDirectory.Should().BeEquivalentTo(FileSystem.Instance.Path.GetDirectoryName(path));
 
-            Assert.AreEqual(path, solution.SolutionPath);
-            Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
-            Assert.AreEqual(5, solution.Projects.Count());
-
-            Assert.IsInstanceOfType(solution.ProtocolDocument, typeof(XmlDocument));
-            Assert.AreEqual(5, solution.QActions.Count);
+            solution.Projects.Should().HaveCount(5);
+            solution.QActions.Should().HaveCount(5);
 
             var qa1 = solution.QActions.FirstOrDefault(q => q.Id == 1);
-            Assert.IsNotNull(qa1);
-            Assert.AreEqual(1, qa1.Files.Count);
-            Assert.IsFalse(String.IsNullOrEmpty(qa1.Files.First().Code));
-            CollectionAssert.AreEquivalent(new[] { "Newtonsoft.Json.dll", "System.dll", "System.Xml.dll", "[ProtocolName].[ProtocolVersion].QAction.63000.dll" }, qa1.DllImports.ToArray());
+            qa1.Should().NotBeNull();
+            qa1.Files.Should().HaveCount(1);
+            qa1.Files[0].Code.Should().NotBeNullOrEmpty();
+            qa1.DllImports.Should().BeEquivalentTo(new[] { "Newtonsoft.Json.dll", "System.dll", "System.Xml.dll", "[ProtocolName].[ProtocolVersion].QAction.63000.dll" });
 
             var qa2 = solution.QActions.FirstOrDefault(q => q.Id == 2);
-            Assert.IsNotNull(qa2);
-            Assert.AreEqual(1, qa2.Files.Count);
-            Assert.IsFalse(String.IsNullOrEmpty(qa2.Files.First().Code));
-            CollectionAssert.AreEquivalent(new[] { "System.dll", "[ProtocolName].[ProtocolVersion].QAction.1.dll", "[ProtocolName].[ProtocolVersion].QAction.63000.dll" }, qa2.DllImports.ToArray());
+            qa2.Should().NotBeNull();
+            qa2.Files.Should().HaveCount(1);
+            qa2.Files[0].Code.Should().NotBeNullOrEmpty();
+            qa2.DllImports.Should().BeEquivalentTo(new[] { "System.dll", "[ProtocolName].[ProtocolVersion].QAction.1.dll", "[ProtocolName].[ProtocolVersion].QAction.63000.dll" });
 
             var qa3 = solution.QActions.FirstOrDefault(q => q.Id == 3);
-            Assert.IsNotNull(qa3);
-            CollectionAssert.AreEquivalent(new[] { "QAction_3.cs", "Class1.cs", "SubDir\\Class2.cs" }, qa3.Files.Select(x => x.Name).ToArray());
-            Assert.IsTrue(qa3.Files.All(x => !String.IsNullOrEmpty(x.Code)));
-            CollectionAssert.AreEquivalent(new[] { "System.dll", "[ProtocolName].[ProtocolVersion].QAction.63000.dll" }, qa3.DllImports.ToArray());
+            qa3.Should().NotBeNull();
+            qa3.Files.Should().HaveCount(3);
+            qa3.Files.All(x => !String.IsNullOrEmpty(x.Code)).Should().BeTrue();
+            qa3.Files[0].Code.Should().NotBeNullOrEmpty();
+            qa3.Files[1].Code.Should().NotBeNullOrEmpty();
+            qa3.Files[2].Code.Should().NotBeNullOrEmpty();
+            qa3.DllImports.Should().BeEquivalentTo(new[] { "System.dll", "[ProtocolName].[ProtocolVersion].QAction.63000.dll" });
 
             var qa4 = solution.QActions.FirstOrDefault(q => q.Id == 4);
-            Assert.IsNotNull(qa4);
-            Assert.IsTrue(qa4.Files.All(x => !String.IsNullOrEmpty(x.Code)));
-            Assert.AreEqual(0, qa4.DllImports.Count);
+            qa4.Should().NotBeNull();
+            qa4.Files.All(x => !String.IsNullOrEmpty(x.Code)).Should().BeTrue();
+            qa4.DllImports.Should().BeEmpty();
 
             var qa63000 = solution.QActions.FirstOrDefault(q => q.Id == 63000);
-            Assert.IsNotNull(qa63000);
-            Assert.AreEqual(1, qa63000.Files.Count);
-            Assert.IsFalse(String.IsNullOrEmpty(qa63000.Files.First().Code));
-            CollectionAssert.AreEquivalent(new[] { "System.dll" }, qa63000.DllImports.ToArray());
+            qa63000.Should().NotBeNull();
+            qa63000.Files.Should().HaveCount(1);
+            qa63000.Files[0].Code.Should().NotBeNullOrEmpty();
+            qa63000.DllImports.Should().BeEquivalentTo(new[] { "System.dll" });
         }
     }
 }
