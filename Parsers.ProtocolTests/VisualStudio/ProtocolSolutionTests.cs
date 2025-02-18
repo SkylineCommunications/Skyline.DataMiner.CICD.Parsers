@@ -1,12 +1,12 @@
 ﻿namespace Parsers.ProtocolTests.VisualStudio
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Common.Xml;
     using Skyline.DataMiner.CICD.Parsers.Protocol.VisualStudio;
 
@@ -16,16 +16,16 @@
         [TestMethod]
         public void ProtocolSolution_Solution_Load()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
-            var path = Path.Combine(dir, "protocol.sln");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
+            var path = FileSystem.Instance.Path.Combine(dir, "protocol.sln");
 
             var solution = ProtocolSolution.Load(path);
 
             Assert.IsInstanceOfType(solution, typeof(ProtocolSolution));
 
             Assert.AreEqual(path, solution.SolutionPath);
-            Assert.AreEqual(Path.GetDirectoryName(path), solution.SolutionDirectory);
+            Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
             Assert.AreEqual(5, solution.Projects.Count());
 
             Assert.IsInstanceOfType(solution.ProtocolDocument, typeof(XmlDocument));

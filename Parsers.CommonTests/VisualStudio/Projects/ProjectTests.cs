@@ -1,8 +1,6 @@
 ﻿#pragma warning disable CS0618 // Type or member is obsolete
 namespace Parsers.CommonTests.VisualStudio.Projects
 {
-    using System;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
 
@@ -10,6 +8,7 @@ namespace Parsers.CommonTests.VisualStudio.Projects
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects;
 
     [TestClass]
@@ -19,9 +18,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_GeneralValid()
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting"));
-            var path = Path.Combine(dir, "Basic.csproj");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting"));
+            var path = FileSystem.Instance.Path.Combine(dir, "Basic.csproj");
 
             // Act
             var result = Project.Load(path, "Basic");
@@ -44,9 +43,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_GeneralValid_LoadViaPathOnly()
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting"));
-            var path = Path.Combine(dir, "Basic.csproj");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting"));
+            var path = FileSystem.Instance.Path.Combine(dir, "Basic.csproj");
 
             // Act
             var result = Project.Load(path);
@@ -75,9 +74,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_TargetFrameWorkMoniker(string fileName, string expectedResult)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\TFM"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\TFM"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -97,9 +96,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_Files_Amount(string fileName, int expectedResult)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\Files"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\Files"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -116,9 +115,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_References_Amount(string fileName, int expectedResult)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\References"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\References"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -136,9 +135,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_References_SingleReference(string fileName, string expectedName, string expectedHintPath)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\References"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\References"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -161,9 +160,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_ProjectReferences_Amount(string fileName, int expectedResult)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\ProjectReferences"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\ProjectReferences"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -179,9 +178,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_ProjectReferences_SingleReference(string fileName, string expectedName, string expectedPath, string expectedGuid)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\ProjectReferences"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\ProjectReferences"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -206,9 +205,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_PackageReferences_Amount(string fileName, int expectedResult)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\PackageReferences"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\PackageReferences"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -224,9 +223,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_PackageReferences_SingleReference(string fileName, string expectedName, string expectedVersion)
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\PackageReferences"));
-            var path = Path.Combine(dir, fileName);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\PackageReferences"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
 
             // Act
             var result = Project.Load(path, "name");
@@ -244,9 +243,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         public void Load_SpecialCharsSupported()
         {
             // Arrange
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\SpecialChar"));
-            var path = Path.Combine(dir, "SpecialChar.csproj");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\SpecialChar"));
+            var path = FileSystem.Instance.Path.Combine(dir, "SpecialChar.csproj");
 
             // Act
             var result = Project.Load(path, "Basic");
@@ -264,9 +263,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         [TestMethod]
         public void SLDisCompiler_ProjectFile_Load1()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
-            var path = Path.Combine(dir, "QAction_1", "QAction_1.csproj");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
+            var path = FileSystem.Instance.Path.Combine(dir, "QAction_1", "QAction_1.csproj");
 
             var project = Project.Load(path, "QAction_1");
 
@@ -288,9 +287,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         [TestMethod]
         public void SLDisCompiler_ProjectFile_Load2()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
-            var path = Path.Combine(dir, "QAction_2", "QAction_2.csproj");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
+            var path = FileSystem.Instance.Path.Combine(dir, "QAction_2", "QAction_2.csproj");
 
             var project = Project.Load(path, "QAction_2");
 
@@ -316,9 +315,9 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         [TestMethod]
         public void SLDisCompiler_ProjectFile_Load3()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dir = Path.GetFullPath(Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
-            var path = Path.Combine(dir, "QAction_3", "QAction_3.csproj");
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution1"));
+            var path = FileSystem.Instance.Path.Combine(dir, "QAction_3", "QAction_3.csproj");
 
             var project = Project.Load(path, "QAction_3");
 
