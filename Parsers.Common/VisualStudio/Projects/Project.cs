@@ -172,13 +172,13 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         /// <exception cref="FileNotFoundException">The file specified in <paramref name="path"/> does not exist.</exception>
         public static Project Load(string path)
         {
+            // Make sure to use the full path
+            path = FileSystem.Path.GetFullPath(path);
+
             if (!FileSystem.File.Exists(path))
             {
                 throw new FileNotFoundException("Could not find project file: " + path);
             }
-
-            // Make sure to use the full path
-            path = FileSystem.Path.GetFullPath(path);
 
             string projectDir = FileSystem.Path.GetDirectoryName(path);
             string projectName = FileSystem.Path.GetFileNameWithoutExtension(path);
