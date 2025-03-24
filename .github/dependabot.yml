@@ -9,10 +9,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    groups:
-      skyline-cicd:
-        patterns:
-          - "Skyline.DataMiner.CICD.*"
     ignore:
       - dependency-name: "FluentAssertions"
         versions: [ ">=8.0.0" ]
