@@ -36,6 +36,11 @@
         /// Represents a DataMiner User-Defined API project.
         /// </summary>
         UserDefinedApi,
+
+        /// <summary>
+        /// Represents a DataMiner Test project.
+        /// </summary>
+        TestPackage,
     }
 
     /// <summary>
@@ -50,6 +55,7 @@
             ["AutomationScriptLibrary"] = DataMinerProjectType.AutomationScriptLibrary,
             ["AdHocDataSource"] = DataMinerProjectType.AdHocDataSource,
             ["UserDefinedApi"] = DataMinerProjectType.UserDefinedApi,
+            ["TestPackage"] = DataMinerProjectType.TestPackage,
         };
 
         private static readonly Dictionary<DataMinerProjectType, string> EnumToString = new Dictionary<DataMinerProjectType, string>
@@ -59,6 +65,7 @@
             [DataMinerProjectType.AutomationScriptLibrary] = "AutomationScriptLibrary",
             [DataMinerProjectType.AdHocDataSource] = "AdHocDataSource",
             [DataMinerProjectType.UserDefinedApi] = "UserDefinedApi",
+            [DataMinerProjectType.TestPackage] = "TestPackage",
         };
 
         /// <summary>
