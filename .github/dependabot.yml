@@ -12,3 +12,5 @@ updates:
     ignore:
       - dependency-name: "FluentAssertions"
         versions: [ ">=8.0.0" ]
+    exclude-paths:
+      - "Parsers.CommonTests/VisualStudio/TestFiles/**"
