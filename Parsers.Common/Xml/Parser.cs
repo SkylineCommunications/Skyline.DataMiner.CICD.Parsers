@@ -159,7 +159,10 @@
             Token lastToken = Tokens[lastIndex];
 
             string s1 = firstToken.Text.Substring(0, offset - firstToken.Offset);
-            string s2 = lastToken.Text.Substring(offset + length - lastToken.Offset);
+            int startIndex = offset + length - lastToken.Offset;
+
+            // Use Math.Min to ensure startIndex does not exceed string length.
+            string s2 = lastToken.Text.Substring(Math.Min(startIndex, lastToken.Text.Length));
 
             // when deleting a '<'character, also include the previous token
             if (firstIndex > 0 && firstToken.GetSubTextByGlobalPos(offset, length).Contains('<'))
