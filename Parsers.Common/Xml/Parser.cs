@@ -161,9 +161,8 @@
             string s1 = firstToken.Text.Substring(0, offset - firstToken.Offset);
             int startIndex = offset + length - lastToken.Offset;
 
-            // Added safeguard (normally should not occur).
-            if (startIndex > lastToken.Text.Length) startIndex = lastToken.Text.Length;
-            string s2 = lastToken.Text.Substring(startIndex);
+            // Use Math.Min to ensure startIndex does not exceed string length.
+            string s2 = lastToken.Text.Substring(Math.Min(startIndex, lastToken.Text.Length));
 
             // when deleting a '<'character, also include the previous token
             if (firstIndex > 0 && firstToken.GetSubTextByGlobalPos(offset, length).Contains('<'))
