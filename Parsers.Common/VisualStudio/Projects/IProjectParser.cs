@@ -20,6 +20,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
 
         string GetTargetFrameworkMoniker();
 
+        bool TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker);
+
         IEnumerable<ProjectFile> GetSharedProjectCompileFiles();
 
         DataMinerProjectType? GetDataMinerProjectType();

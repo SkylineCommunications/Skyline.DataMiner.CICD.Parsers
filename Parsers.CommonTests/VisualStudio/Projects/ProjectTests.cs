@@ -86,6 +86,22 @@ namespace Parsers.CommonTests.VisualStudio.Projects
         }
 
         [TestMethod]
+        [DataRow("SampleProject.csproj", ".NETFramework,Version=v4.8")]
+        public void Load_TargetFrameworkMonikerBuildProperties(string fileName, string expectedResult)
+        {
+            // Arrange
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Automation\Solution1\SampleProject"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
+
+            // Act
+            var result = Project.Load(path);
+
+            // Assert
+            result.TargetFrameworkMoniker.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
         [DataRow("Files_Valid.csproj", 2)]
         [DataRow("Files_NoFiles.csproj", 0)]
         [DataRow("SharedProject.projitems", 2)]

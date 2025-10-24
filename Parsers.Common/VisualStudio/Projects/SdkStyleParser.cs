@@ -155,15 +155,17 @@
             }
         }
 
-        public string GetTargetFrameworkMoniker()
+        public bool TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker)
         {
+            targetFrameworkMoniker = null;
+
             var propertyGroups = document
                                  ?.Element("Project")
                                  ?.Elements("PropertyGroup");
 
             if (propertyGroups == null)
             {
-                throw new ParserException("No PropertyGroup tags found in the csproj file!");
+                return false;
             }
 
             foreach (XElement propertyGroup in propertyGroups)
@@ -182,10 +184,21 @@
                 string sdkStyleTfm = tfms.Split(';')[0];
                 var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
 
-                return tfm.DotNetFrameworkName;
+                targetFrameworkMoniker = tfm.DotNetFrameworkName;
+                return true;
             }
 
-            throw new ParserException("No TargetFramework tag found in the csproj file!");
+            return false;
+        }
+
+        public string GetTargetFrameworkMoniker()
+        {
+            if(!TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker))
+            {
+                throw new ParserException("No TargetFramework tag found in the csproj file!");
+            }
+
+            return targetFrameworkMoniker;
         }
 
         public DataMinerProjectType? GetDataMinerProjectType()

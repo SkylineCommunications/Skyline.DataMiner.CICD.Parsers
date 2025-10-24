@@ -8,6 +8,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
     using System.Text;
     using System.Xml.Linq;
 
+    using NuGet.Frameworks;
+
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
     using Skyline.DataMiner.CICD.Parsers.Common.Extensions;
@@ -182,13 +184,13 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
 
             string projectDir = FileSystem.Path.GetDirectoryName(path);
             string projectName = FileSystem.Path.GetFileNameWithoutExtension(path);
-            
+
             string extension = FileSystem.Path.GetExtension(path);
             if (!SupportedProjectExtensions.Contains(extension))
             {
                 throw new NotImplementedException("Project Load does not support this project type.");
             }
-            
+
             try
             {
                 var xmlContent = FileSystem.File.ReadAllText(path, Encoding.UTF8);
@@ -221,7 +223,21 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 project._files.AddRange(files);
                 project._files.AddRange(parser.GetSharedProjectCompileFiles());
 
-                project.TargetFrameworkMoniker = parser.GetTargetFrameworkMoniker();
+                if (parser.TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker))
+                {
+                    project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                }
+                else
+                {
+                    // Search for directory.build.props file that may specify the TFM.
+                    if (!TryGetTargetFrameworkFromDirectoryBuildProps(projectDir, out targetFrameworkMoniker))
+                    {
+                        throw new ParserException($"Could not determine Target Framework Moniker for project '{projectName}' ({path}).");
+                    }
+
+                    project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                }
+
                 project.DataMinerProjectType = parser.GetDataMinerProjectType();
 
                 return project;
@@ -230,6 +246,55 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             {
                 throw new ParserException($"Failed to load project '{projectName}' ({path}).", e);
             }
+        }
+
+        private static bool TryGetTargetFrameworkFromDirectoryBuildProps(string projectDir, out string targetFrameworkMoniker)
+        {
+            targetFrameworkMoniker = null;
+            string currentDir = projectDir;
+
+            while (!String.IsNullOrEmpty(currentDir))
+            {
+                string directoryBuildPropsPath = FileSystem.Path.Combine(currentDir, "Directory.Build.props");
+                if (FileSystem.File.Exists(directoryBuildPropsPath))
+                {
+                    try
+                    {
+                        var xmlContent = FileSystem.File.ReadAllText(directoryBuildPropsPath, Encoding.UTF8);
+                        var document = XDocument.Parse(xmlContent);
+                        var tfmElement = document.Descendants("TargetFramework").FirstOrDefault();
+
+                        if(tfmElement == null)
+                        {
+                            tfmElement = document.Descendants("TargetFrameworks").FirstOrDefault();
+                        }
+
+                        if (tfmElement != null && !String.IsNullOrEmpty(tfmElement.Value))
+                        {
+                            targetFrameworkMoniker = ConvertTargetFrameworkMoniker(tfmElement.Value);
+                            return true;
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore parsing errors and continue searching up the directory tree.
+                    }
+                }
+
+                currentDir = FileSystem.Path.GetDirectoryName(currentDir);
+            }
+
+            return false;
+        }
+
+        private static string ConvertTargetFrameworkMoniker(string tfms)
+        {
+            // SDK style projects support multi-targeting. Return first item.
+            // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
+            string sdkStyleTfm = tfms.Split(';')[0];
+            var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
+
+            return tfm.DotNetFrameworkName;
         }
     }
 }
