@@ -8,6 +8,7 @@
     using System.Xml.Linq;
 
     using Skyline.DataMiner.CICD.FileSystem;
+    using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
 
     internal class LegacyStyleParser : IProjectParser
     {
@@ -204,6 +205,8 @@
 
         public bool TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker)
         {
+            targetFrameworkMoniker = null;
+
             // Select the "Release" build configuration.
             var configurationGroups = document
                 .Element(Msbuild + "Project")
@@ -212,8 +215,7 @@
 
             if (configurationGroups == null)
             {
-                targetFrameworkMoniker = Constants.TargetFramework462;
-                return true;
+                return false;
             }
 
             foreach (var configurationGroup in configurationGroups)
@@ -227,49 +229,14 @@
 
                 if (versionTag == null || versionTag.Value.Length < 2)
                 {
-                    targetFrameworkMoniker = Constants.TargetFramework462;
-                    return true;
+                    return false;
                 }
 
                 targetFrameworkMoniker = ".NETFramework,Version=" + versionTag.Value.Substring(1);
                 return true;
             }
 
-            targetFrameworkMoniker = Constants.TargetFramework462;
-            return true;
-        }
-
-        public string GetTargetFrameworkMoniker()
-        {
-            // Select the "Release" build configuration.
-            var configurationGroups = document
-                .Element(Msbuild + "Project")
-                ?.Elements(Msbuild + "PropertyGroup")
-                .Elements(Msbuild + "Configuration");
-
-            if (configurationGroups == null)
-            {
-                return Constants.TargetFramework462;
-            }
-
-            foreach (var configurationGroup in configurationGroups)
-            {
-                if (configurationGroup.Attribute("Condition")?.Value.Contains("'$(Configuration)' == ''") != true)
-                {
-                    continue;
-                }
-
-                var versionTag = configurationGroup.Parent?.Element(Msbuild + "TargetFrameworkVersion");
-
-                if (versionTag == null || versionTag.Value.Length < 2)
-                {
-                    return Constants.TargetFramework462;
-                }
-
-                return ".NETFramework,Version=" + versionTag.Value.Substring(1);
-            }
-
-            return Constants.TargetFramework462;
+            return false;
         }
 
         public DataMinerProjectType? GetDataMinerProjectType() => null; // We don't support this in legacy style

@@ -92,6 +92,12 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             ".shproj"
         };
 
+        internal static readonly string[] SharedProjectExtensions =
+        {
+            ".projitems",
+            ".shproj"
+        };
+
         /// <summary>
         /// Gets the project name.
         /// </summary>
@@ -223,19 +229,36 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 project._files.AddRange(files);
                 project._files.AddRange(parser.GetSharedProjectCompileFiles());
 
-                if (parser.TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker))
+                // Shared projects do not have TFM, inherit from referencing project.
+                if (!SharedProjectExtensions.Contains(extension))
                 {
-                    project.TargetFrameworkMoniker = targetFrameworkMoniker;
-                }
-                else
-                {
-                    // Search for directory.build.props file that may specify the TFM.
-                    if (!TryGetTargetFrameworkFromDirectoryBuildProps(projectDir, out targetFrameworkMoniker))
+                    if (parser.TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker))
                     {
+                        project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                    }
+                    else
+                    {
+                        if(project.ProjectStyle == ProjectStyle.Legacy)
+                        {
+                            // Search for directory.build.props file that may specify the TFM. Project file has precedence over directory.build.props file.
+                            if (TryGetTargetFrameworkFromDirectoryBuildPropsLegacyStyle(projectDir, out targetFrameworkMoniker))
+                            {
+                                project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                                return project;
+                            }
+                        }
+                        else if(project.ProjectStyle == ProjectStyle.Sdk)
+                        {
+                            // Search for directory.build.props file that may specify the TFM.
+                            if (TryGetTargetFrameworkFromDirectoryBuildPropsSdkStyle(projectDir, out targetFrameworkMoniker))
+                            {
+                                project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                                return project;
+                            }
+                        }
+
                         throw new ParserException($"Could not determine Target Framework Moniker for project '{projectName}' ({path}).");
                     }
-
-                    project.TargetFrameworkMoniker = targetFrameworkMoniker;
                 }
 
                 project.DataMinerProjectType = parser.GetDataMinerProjectType();
@@ -248,7 +271,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             }
         }
 
-        private static bool TryGetTargetFrameworkFromDirectoryBuildProps(string projectDir, out string targetFrameworkMoniker)
+        private static bool TryGetTargetFrameworkFromDirectoryBuildPropsSdkStyle(string projectDir, out string targetFrameworkMoniker)
         {
             targetFrameworkMoniker = null;
             string currentDir = projectDir;
@@ -262,11 +285,12 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                     {
                         var xmlContent = FileSystem.File.ReadAllText(directoryBuildPropsPath, Encoding.UTF8);
                         var document = XDocument.Parse(xmlContent);
-                        var tfmElement = document.Descendants("TargetFramework").FirstOrDefault();
+                        var defaultNs = document.Root.GetDefaultNamespace();
+                        var tfmElement = document.Descendants(defaultNs + "TargetFramework").FirstOrDefault();
 
                         if(tfmElement == null)
                         {
-                            tfmElement = document.Descendants("TargetFrameworks").FirstOrDefault();
+                            tfmElement = document.Descendants(defaultNs + "TargetFrameworks").FirstOrDefault();
                         }
 
                         if (tfmElement != null && !String.IsNullOrEmpty(tfmElement.Value))
@@ -274,6 +298,43 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                             targetFrameworkMoniker = ConvertTargetFrameworkMoniker(tfmElement.Value);
                             return true;
                         }
+                    }
+                    catch
+                    {
+                        // Ignore parsing errors and continue searching up the directory tree.
+                    }
+                }
+
+                currentDir = FileSystem.Path.GetDirectoryName(currentDir);
+            }
+
+            return false;
+        }
+
+        private static bool TryGetTargetFrameworkFromDirectoryBuildPropsLegacyStyle(string projectDir, out string targetFrameworkMoniker)
+        {
+            targetFrameworkMoniker = null;
+            string currentDir = projectDir;
+
+            while (!String.IsNullOrEmpty(currentDir))
+            {
+                string directoryBuildPropsPath = FileSystem.Path.Combine(currentDir, "Directory.Build.props");
+                if (FileSystem.File.Exists(directoryBuildPropsPath))
+                {
+                    try
+                    {
+                        var xmlContent = FileSystem.File.ReadAllText(directoryBuildPropsPath, Encoding.UTF8);
+                        var document = XDocument.Parse(xmlContent);
+                        var defaultNs = document.Root.GetDefaultNamespace();
+                        var tfmElement = document.Descendants(defaultNs + "TargetFramework").FirstOrDefault();
+
+                        if (tfmElement == null || tfmElement.Value.Length < 2)
+                        {
+                            return false;
+                        }
+
+                        targetFrameworkMoniker = ".NETFramework,Version=" + tfmElement.Value.Substring(1);
+                        return true;
                     }
                     catch
                     {

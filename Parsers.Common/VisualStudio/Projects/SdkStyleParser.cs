@@ -191,16 +191,6 @@
             return false;
         }
 
-        public string GetTargetFrameworkMoniker()
-        {
-            if(!TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker))
-            {
-                throw new ParserException("No TargetFramework tag found in the csproj file!");
-            }
-
-            return targetFrameworkMoniker;
-        }
-
         public DataMinerProjectType? GetDataMinerProjectType()
         {
             var propertyGroups = document
