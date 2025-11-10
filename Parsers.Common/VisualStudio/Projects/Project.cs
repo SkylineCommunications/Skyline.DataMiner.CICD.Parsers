@@ -236,27 +236,12 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                     {
                         project.TargetFrameworkMoniker = targetFrameworkMoniker;
                     }
+                    else if(parser.TryGetTargetFrameworkFromDirectoryBuildProps(out targetFrameworkMoniker))
+                    {
+                        project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                    }
                     else
                     {
-                        if(project.ProjectStyle == ProjectStyle.Legacy)
-                        {
-                            // Search for directory.build.props file that may specify the TFM. Project file has precedence over directory.build.props file.
-                            if (TryGetTargetFrameworkFromDirectoryBuildPropsLegacyStyle(projectDir, out targetFrameworkMoniker))
-                            {
-                                project.TargetFrameworkMoniker = targetFrameworkMoniker;
-                                return project;
-                            }
-                        }
-                        else if(project.ProjectStyle == ProjectStyle.Sdk)
-                        {
-                            // Search for directory.build.props file that may specify the TFM.
-                            if (TryGetTargetFrameworkFromDirectoryBuildPropsSdkStyle(projectDir, out targetFrameworkMoniker))
-                            {
-                                project.TargetFrameworkMoniker = targetFrameworkMoniker;
-                                return project;
-                            }
-                        }
-
                         throw new ParserException($"Could not determine Target Framework Moniker for project '{projectName}' ({path}).");
                     }
                 }
@@ -269,83 +254,6 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
             {
                 throw new ParserException($"Failed to load project '{projectName}' ({path}).", e);
             }
-        }
-
-        private static bool TryGetTargetFrameworkFromDirectoryBuildPropsSdkStyle(string projectDir, out string targetFrameworkMoniker)
-        {
-            targetFrameworkMoniker = null;
-            string currentDir = projectDir;
-
-            while (!String.IsNullOrEmpty(currentDir))
-            {
-                string directoryBuildPropsPath = FileSystem.Path.Combine(currentDir, "Directory.Build.props");
-                if (FileSystem.File.Exists(directoryBuildPropsPath))
-                {
-                    try
-                    {
-                        var xmlContent = FileSystem.File.ReadAllText(directoryBuildPropsPath, Encoding.UTF8);
-                        var document = XDocument.Parse(xmlContent);
-                        var defaultNs = document.Root.GetDefaultNamespace();
-                        var tfmElement = document.Descendants(defaultNs + "TargetFramework").FirstOrDefault();
-
-                        if(tfmElement == null)
-                        {
-                            tfmElement = document.Descendants(defaultNs + "TargetFrameworks").FirstOrDefault();
-                        }
-
-                        if (tfmElement != null && !String.IsNullOrEmpty(tfmElement.Value))
-                        {
-                            targetFrameworkMoniker = ConvertTargetFrameworkMoniker(tfmElement.Value);
-                            return true;
-                        }
-                    }
-                    catch
-                    {
-                        // Ignore parsing errors and continue searching up the directory tree.
-                    }
-                }
-
-                currentDir = FileSystem.Path.GetDirectoryName(currentDir);
-            }
-
-            return false;
-        }
-
-        private static bool TryGetTargetFrameworkFromDirectoryBuildPropsLegacyStyle(string projectDir, out string targetFrameworkMoniker)
-        {
-            targetFrameworkMoniker = null;
-            string currentDir = projectDir;
-
-            while (!String.IsNullOrEmpty(currentDir))
-            {
-                string directoryBuildPropsPath = FileSystem.Path.Combine(currentDir, "Directory.Build.props");
-                if (FileSystem.File.Exists(directoryBuildPropsPath))
-                {
-                    try
-                    {
-                        var xmlContent = FileSystem.File.ReadAllText(directoryBuildPropsPath, Encoding.UTF8);
-                        var document = XDocument.Parse(xmlContent);
-                        var defaultNs = document.Root.GetDefaultNamespace();
-                        var tfmElement = document.Descendants(defaultNs + "TargetFramework").FirstOrDefault();
-
-                        if (tfmElement == null || tfmElement.Value.Length < 2)
-                        {
-                            return false;
-                        }
-
-                        targetFrameworkMoniker = ".NETFramework,Version=" + tfmElement.Value.Substring(1);
-                        return true;
-                    }
-                    catch
-                    {
-                        // Ignore parsing errors and continue searching up the directory tree.
-                    }
-                }
-
-                currentDir = FileSystem.Path.GetDirectoryName(currentDir);
-            }
-
-            return false;
         }
 
         private static string ConvertTargetFrameworkMoniker(string tfms)

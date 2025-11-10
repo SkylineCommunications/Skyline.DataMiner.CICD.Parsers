@@ -218,6 +218,20 @@
                 return false;
             }
 
+            return TryGetTargetFrameworkMonikerFromConfigurationGroups(configurationGroups, out targetFrameworkMoniker);
+        }
+
+        public bool TryGetTargetFrameworkFromDirectoryBuildProps(out string targetFrameworkMoniker)
+        {
+            // Not supported in legacy style projects.
+            targetFrameworkMoniker = null;
+            return false;
+        }
+
+        private static bool TryGetTargetFrameworkMonikerFromConfigurationGroups(IEnumerable<XElement> configurationGroups, out string targetFrameworkMoniker)
+        {
+            targetFrameworkMoniker = null;
+
             foreach (var configurationGroup in configurationGroups)
             {
                 if (configurationGroup.Attribute("Condition")?.Value.Contains("'$(Configuration)' == ''") != true)

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Xml.Linq;
 
     using NuGet.Frameworks;
@@ -167,6 +168,49 @@
             {
                 return false;
             }
+
+            return TryGetTargetFrameworkMoniker(propertyGroups, out targetFrameworkMoniker);
+        }
+
+        public bool TryGetTargetFrameworkFromDirectoryBuildProps(out string targetFrameworkMoniker)
+        {
+            targetFrameworkMoniker = null;
+            string currentDir = projectDir;
+
+            while (!String.IsNullOrEmpty(currentDir))
+            {
+                string directoryBuildPropsPath = FileSystem.Path.Combine(currentDir, "Directory.Build.props");
+                if (FileSystem.File.Exists(directoryBuildPropsPath))
+                {
+                    try
+                    {
+                        var xmlContent = FileSystem.File.ReadAllText(directoryBuildPropsPath, Encoding.UTF8);
+                        var doc = XDocument.Parse(xmlContent);
+
+                        var propertyGroups = doc
+                                 ?.Element("Project")
+                                 ?.Elements("PropertyGroup");
+
+                        if (TryGetTargetFrameworkMoniker(propertyGroups, out targetFrameworkMoniker))
+                        {
+                            return true;
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore parsing errors and continue searching up the directory tree.
+                    }
+                }
+
+                currentDir = FileSystem.Path.GetDirectoryName(currentDir);
+            }
+
+            return false;
+        }
+
+        private static bool TryGetTargetFrameworkMoniker(IEnumerable<XElement> propertyGroups, out string targetFrameworkMoniker)
+        {
+            targetFrameworkMoniker = null;
 
             foreach (XElement propertyGroup in propertyGroups)
             {
