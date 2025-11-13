@@ -8,6 +8,7 @@
     using System.Xml.Linq;
 
     using Skyline.DataMiner.CICD.FileSystem;
+    using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
 
     internal class LegacyStyleParser : IProjectParser
     {
@@ -202,8 +203,10 @@
             }
         }
 
-        public string GetTargetFrameworkMoniker()
+        public bool TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker)
         {
+            targetFrameworkMoniker = null;
+
             // Select the "Release" build configuration.
             var configurationGroups = document
                 .Element(Msbuild + "Project")
@@ -212,8 +215,22 @@
 
             if (configurationGroups == null)
             {
-                return Constants.TargetFramework462;
+                return false;
             }
+
+            return TryGetTargetFrameworkMonikerFromConfigurationGroups(configurationGroups, out targetFrameworkMoniker);
+        }
+
+        public bool TryGetTargetFrameworkFromDirectoryBuildProps(out string targetFrameworkMoniker)
+        {
+            // Not supported in legacy style projects.
+            targetFrameworkMoniker = null;
+            return false;
+        }
+
+        private static bool TryGetTargetFrameworkMonikerFromConfigurationGroups(IEnumerable<XElement> configurationGroups, out string targetFrameworkMoniker)
+        {
+            targetFrameworkMoniker = null;
 
             foreach (var configurationGroup in configurationGroups)
             {
@@ -226,13 +243,14 @@
 
                 if (versionTag == null || versionTag.Value.Length < 2)
                 {
-                    return Constants.TargetFramework462;
+                    return false;
                 }
 
-                return ".NETFramework,Version=" + versionTag.Value.Substring(1);
+                targetFrameworkMoniker = ".NETFramework,Version=" + versionTag.Value.Substring(1);
+                return true;
             }
 
-            return Constants.TargetFramework462;
+            return false;
         }
 
         public DataMinerProjectType? GetDataMinerProjectType() => null; // We don't support this in legacy style

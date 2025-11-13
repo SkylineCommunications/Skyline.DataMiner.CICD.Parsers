@@ -31,7 +31,7 @@
 
             // Act
             Action action = () => _ = legacyStyleParser.GetCompileFiles().ToList();
-            
+
             // Assert
             action.Should().Throw<FileNotFoundException>();
         }

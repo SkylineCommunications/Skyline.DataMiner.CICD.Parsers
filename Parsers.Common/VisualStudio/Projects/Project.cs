@@ -8,6 +8,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
     using System.Text;
     using System.Xml.Linq;
 
+    using NuGet.Frameworks;
+
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
     using Skyline.DataMiner.CICD.Parsers.Common.Extensions;
@@ -86,6 +88,12 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
         internal static readonly string[] SupportedProjectExtensions =
         {
             ".csproj",
+            ".projitems",
+            ".shproj"
+        };
+
+        internal static readonly string[] SharedProjectExtensions =
+        {
             ".projitems",
             ".shproj"
         };
@@ -182,13 +190,13 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
 
             string projectDir = FileSystem.Path.GetDirectoryName(path);
             string projectName = FileSystem.Path.GetFileNameWithoutExtension(path);
-            
+
             string extension = FileSystem.Path.GetExtension(path);
             if (!SupportedProjectExtensions.Contains(extension))
             {
                 throw new NotImplementedException("Project Load does not support this project type.");
             }
-            
+
             try
             {
                 var xmlContent = FileSystem.File.ReadAllText(path, Encoding.UTF8);
@@ -221,7 +229,23 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 project._files.AddRange(files);
                 project._files.AddRange(parser.GetSharedProjectCompileFiles());
 
-                project.TargetFrameworkMoniker = parser.GetTargetFrameworkMoniker();
+                // Shared projects do not have TFM, inherit from referencing project.
+                if (!SharedProjectExtensions.Contains(extension))
+                {
+                    if (parser.TryGetTargetFrameworkMoniker(out string targetFrameworkMoniker))
+                    {
+                        project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                    }
+                    else if(parser.TryGetTargetFrameworkFromDirectoryBuildProps(out targetFrameworkMoniker))
+                    {
+                        project.TargetFrameworkMoniker = targetFrameworkMoniker;
+                    }
+                    else
+                    {
+                        throw new ParserException($"Could not determine Target Framework Moniker for project '{projectName}' ({path}).");
+                    }
+                }
+
                 project.DataMinerProjectType = parser.GetDataMinerProjectType();
 
                 return project;

@@ -9,6 +9,7 @@ namespace Parsers.CommonTests.VisualStudio.Projects
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using Skyline.DataMiner.CICD.FileSystem;
+    using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
     using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects;
 
     [TestClass]
@@ -66,10 +67,6 @@ namespace Parsers.CommonTests.VisualStudio.Projects
 
         [TestMethod]
         [DataRow("TFM_Valid.csproj", ".NETFramework,Version=4.7")]
-        [DataRow("TFM_InvalidVersion.csproj", ".NETFramework,Version=4.6.2")]
-        [DataRow("TFM_NoConfiguration.csproj", ".NETFramework,Version=4.6.2")]
-        [DataRow("TFM_NoVersion.csproj", ".NETFramework,Version=4.6.2")]
-        [DataRow("TFM_NoVersion.csproj", ".NETFramework,Version=4.6.2")]
         [DataRow("SdkStyle.csproj", ".NETFramework,Version=v4.6.2")]
         public void Load_TargetFrameWorkMoniker(string fileName, string expectedResult)
         {
@@ -80,6 +77,36 @@ namespace Parsers.CommonTests.VisualStudio.Projects
 
             // Act
             var result = Project.Load(path, "name");
+
+            // Assert
+            result.TargetFrameworkMoniker.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
+        [DataRow("TFM_InvalidVersion.csproj")]
+        [DataRow("TFM_NoConfiguration.csproj")]
+        [DataRow("TFM_NoVersion.csproj")]
+        public void Load_NoOeInvalidTargetFrameWorkMoniker(string fileName)
+        {
+            // Arrange
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\ProjectsForTesting\TFM"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
+
+            Assert.Throws<ParserException>(() => Project.Load(path, "name"));
+        }
+
+        [TestMethod]
+        [DataRow("SampleProject.csproj", ".NETFramework,Version=v4.8")]
+        public void Load_TargetFrameworkMonikerBuildProperties(string fileName, string expectedResult)
+        {
+            // Arrange
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Automation\Solution1\SampleProject"));
+            var path = FileSystem.Instance.Path.Combine(dir, fileName);
+
+            // Act
+            var result = Project.Load(path);
 
             // Assert
             result.TargetFrameworkMoniker.Should().BeEquivalentTo(expectedResult);
