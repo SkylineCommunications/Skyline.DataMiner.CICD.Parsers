@@ -255,15 +255,5 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.Projects
                 throw new ParserException($"Failed to load project '{projectName}' ({path}).", e);
             }
         }
-
-        private static string ConvertTargetFrameworkMoniker(string tfms)
-        {
-            // SDK style projects support multi-targeting. Return first item.
-            // https://learn.microsoft.com/en-us/dotnet/standard/frameworks
-            string sdkStyleTfm = tfms.Split(';')[0];
-            var tfm = NuGetFramework.ParseFolder(sdkStyleTfm);
-
-            return tfm.DotNetFrameworkName;
-        }
     }
 }
