@@ -25,6 +25,10 @@
         {
         }
 
+        internal SolutionFolder(Solution solution, Guid guid, string name, string path) : base(solution, guid, name, path)
+        {
+        }
+
         /// <summary>
         /// Gets the files included in this folder.
         /// </summary>

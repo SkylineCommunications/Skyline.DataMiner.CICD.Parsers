@@ -3,16 +3,16 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents a project section of a solution file.
+    /// Represents a project section of a legacy solution file.
     /// </summary>
-    internal class SlnProjectSection
+    internal class LegacySlnProjectSection
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SlnProjectSection"/> class.
+        /// Initializes a new instance of the <see cref="LegacySlnProjectSection"/> class.
         /// </summary>
         /// <param name="name">The name of the section.</param>
         /// <param name="sectionType">The section type.</param>
-        public SlnProjectSection(string name, SlnProjectSectionType sectionType)
+        public LegacySlnProjectSection(string name, LegacySlnProjectSectionType sectionType)
         {
             Name = name;
             Type = sectionType;
@@ -29,7 +29,7 @@
         /// Gets the type of the project section.
         /// </summary>
         /// <value>The project section type.</value>
-        public SlnProjectSectionType Type { get; }
+        public LegacySlnProjectSectionType Type { get; }
 
         /// <summary>
         /// Gets the entries of the project section.

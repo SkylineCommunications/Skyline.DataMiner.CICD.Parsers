@@ -3,16 +3,16 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents a global section.
+    /// Represents a global section in a legacy solution file.
     /// </summary>
-    internal class SlnGlobalSection
+    internal class LegacySlnGlobalSection
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SlnGlobalSection"/> class.
+        /// Initializes a new instance of the <see cref="LegacySlnGlobalSection"/> class.
         /// </summary>
         /// <param name="name">The section name.</param>
         /// <param name="sectionType">The section type.</param>
-        public SlnGlobalSection(string name, SlnGlobalSectionType sectionType)
+        public LegacySlnGlobalSection(string name, LegacySlnGlobalSectionType sectionType)
         {
             Name = name;
             Type = sectionType;
@@ -29,7 +29,7 @@
         /// Gets or sets the type of the section.
         /// </summary>
         /// <value>The section type.</value>
-        public SlnGlobalSectionType Type { get; }
+        public LegacySlnGlobalSectionType Type { get; }
 
         /// <summary>
         /// Gets or sets the section entries.

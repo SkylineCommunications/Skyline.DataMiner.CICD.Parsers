@@ -3,7 +3,7 @@
     /// <summary>
     /// Defines the global section types.
     /// </summary>
-    internal enum SlnGlobalSectionType
+    internal enum LegacySlnGlobalSectionType
     {
         /// <summary>
         /// Post solution section.

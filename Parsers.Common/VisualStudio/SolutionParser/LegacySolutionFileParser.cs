@@ -9,7 +9,7 @@
     /// <summary>
     /// Represents a solution file parser.
     /// </summary>
-    internal class Parser
+    internal class LegacySolutionFileParser
     {
         private static readonly Regex _projectPattern = new Regex(@"Project\(\""(?<typeGuid>.*?)\""\)\s+=\s+\""(?<name>.*?)\"",\s+\""(?<path>.*?)\"",\s+\""(?<guid>.*?)\""(?<content>.*?)\bEndProject\b", RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Singleline);
         private static readonly Regex _globalPattern = new Regex(@"GlobalSection\((?<name>[\w]+)\)\s+=\s+(?<type>(?:post|pre)Solution)(?<content>.*?)EndGlobalSection", RegexOptions.Singleline | RegexOptions.ExplicitCapture);
@@ -19,11 +19,11 @@
         private readonly string _solutionContents;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Parser"/> class.
+        /// Initializes a new instance of the <see cref="LegacySolutionFileParser"/> class.
         /// </summary>
         /// <param name="solutionContents">The solution contents.</param>
         /// <exception cref="ArgumentNullException"><paramref name="solutionContents"/> is <see langword="null"/>.</exception>
-        public Parser(string solutionContents)
+        public LegacySolutionFileParser(string solutionContents)
         {
             _solutionContents = solutionContents ?? throw new ArgumentNullException(nameof(solutionContents));
         }
@@ -32,7 +32,7 @@
         /// Parses the projects of the solution file.
         /// </summary>
         /// <returns>The projects of the solution.</returns>
-        public IEnumerable<SlnProject> ParseProjects()
+        public IEnumerable<LegacySlnProject> ParseProjects()
         {
             var matches = _projectPattern.Matches(_solutionContents);
 
@@ -46,7 +46,7 @@
         /// Parses the global sections of the solution file.
         /// </summary>
         /// <returns>The global sections of the solution file.</returns>
-        public IEnumerable<SlnGlobalSection> ParseGlobalSections()
+        public IEnumerable<LegacySlnGlobalSection> ParseGlobalSections()
         {
             var matches = _globalPattern.Matches(_solutionContents);
 
@@ -56,7 +56,7 @@
             }
         }
 
-        private static SlnProject ParseProject(Match match)
+        private static LegacySlnProject ParseProject(Match match)
         {
             var typeGuid = new Guid(match.Groups["typeGuid"].Value);
             var guid = new Guid(match.Groups["guid"].Value);
@@ -64,7 +64,7 @@
             string path = match.Groups["path"].Value;
             var content = match.Groups["content"].Value.Trim();
 
-            var project = new SlnProject(typeGuid, name, path, guid);
+            var project = new LegacySlnProject(typeGuid, name, path, guid);
 
             if (!String.IsNullOrWhiteSpace(content))
             {
@@ -80,15 +80,15 @@
             return project;
         }
 
-        private static SlnProjectSection ParseProjectSection(Match match)
+        private static LegacySlnProjectSection ParseProjectSection(Match match)
         {
             var projectType = (match.Groups["type"].Value == "preProject")
-                              ? SlnProjectSectionType.PreProject
-                              : SlnProjectSectionType.PostProject;
+                              ? LegacySlnProjectSectionType.PreProject
+                              : LegacySlnProjectSectionType.PostProject;
             string name = match.Groups["name"].Value;
             string entries = match.Groups["entries"].Value;
 
-            var section = new SlnProjectSection(name, projectType);
+            var section = new LegacySlnProjectSection(name, projectType);
 
             if (!String.IsNullOrWhiteSpace(entries))
             {
@@ -105,15 +105,15 @@
             return section;
         }
 
-        private static SlnGlobalSection ParseGlobalSection(Match match)
+        private static LegacySlnGlobalSection ParseGlobalSection(Match match)
         {
             var sectionType = (match.Groups["type"].Value == "preSolution")
-                                  ? SlnGlobalSectionType.PreSolution
-                                  : SlnGlobalSectionType.PostSolution;
+                                  ? LegacySlnGlobalSectionType.PreSolution
+                                  : LegacySlnGlobalSectionType.PostSolution;
             string name = match.Groups["name"].Value;
             var content = match.Groups["content"].Value;
 
-            var section = new SlnGlobalSection(name, sectionType);
+            var section = new LegacySlnGlobalSection(name, sectionType);
 
             if (!String.IsNullOrWhiteSpace(content))
             {

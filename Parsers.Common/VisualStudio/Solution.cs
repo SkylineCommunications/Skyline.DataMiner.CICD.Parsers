@@ -4,6 +4,11 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Threading;
+
+    using Microsoft.VisualStudio.SolutionPersistence;
+    using Microsoft.VisualStudio.SolutionPersistence.Model;
+    using Microsoft.VisualStudio.SolutionPersistence.Serializer;
 
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Loggers;
@@ -48,8 +53,22 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             SolutionPath = path;
             SolutionDirectory = _fileSystem.Path.GetDirectoryName(path);
 
-            Load(allowAll);
+            if (Path.GetExtension(path).Equals(".slnx", StringComparison.OrdinalIgnoreCase))
+            {
+                IsSlnx = true;
+                LoadSlnx(allowAll);
+            }
+            else
+            {
+                LoadLegacy(allowAll);
+            }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the solution is in SLNX format.
+        /// </summary>
+        /// <value><c>true</c> if the solution is in SLNX format; otherwise, <c>false</c>.</value>
+        public bool IsSlnx { get; }
 
         /// <summary>
         /// Gets the solution file path.
@@ -171,17 +190,85 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             _solutionItems[guid] = item;
         }
 
-        private void Load(bool allowAll)
+        private void LoadSlnx(bool allowAll)
+        {
+            ISolutionSerializer serializer = SolutionSerializers.GetSerializerByMoniker(SolutionPath);
+            SolutionModel solution = serializer.OpenAsync(SolutionPath, CancellationToken.None).Result;
+
+            Dictionary<string, SolutionFolder> solutionFolderMap = new Dictionary<string, SolutionFolder>(solution.SolutionFolders.Count);
+
+            if (solution.SolutionFolders?.Count > 0)
+            {
+
+                foreach (var folder in solution.SolutionFolders)
+                {
+                    SolutionFolder solutionFolder = new SolutionFolder(this, folder.Id, folder.ActualDisplayName, folder.Name);
+                    solutionFolderMap[folder.Name] = solutionFolder;
+
+                    if(folder.Files?.Count > 0)
+                    {
+                        // Add folder content.
+                        foreach (var file in folder.Files)
+                        {
+                            solutionFolder.AddFile(new SolutionFileEntry(this, file));
+                        }
+                    }
+
+                    AddSolutionItem(solutionFolder.Guid, solutionFolder);
+                }
+
+                foreach(var folder in solution.SolutionFolders)
+                {
+                    if(folder.Parent != null && solutionFolderMap.TryGetValue(folder.Parent.Name, out var parentFolder) && solutionFolderMap.TryGetValue(folder.Name, out var childFolder))
+                    {
+                        parentFolder.AddChild(childFolder);
+                        childFolder.Parent = parentFolder;
+                    }
+                }
+            }
+
+            if (solution.SolutionProjects?.Count > 0)
+            {
+                SolutionItem solutionItem;
+
+                foreach (var solutionProject in solution.SolutionProjects)
+                {
+                    if (allowAll || (solutionProject.TypeId == SolutionProjectTypeIDs.MsBuildProject || solutionProject.TypeId == SolutionProjectTypeIDs.NetCoreProject))
+                    {
+                        var p = new SolutionParser.Model.SlnProject(
+                            solutionProject.TypeId,
+                            solutionProject.ActualDisplayName,
+                            solutionProject.FilePath,
+                            solutionProject.Id);
+
+                        solutionItem = new ProjectInSolution(this, p);
+
+                        if (solutionProject.Parent is SolutionFolderModel parentFolder)
+                        {
+                            var parentSolutionFolder = solutionFolderMap[parentFolder.Name];
+
+                            solutionItem.Parent = parentSolutionFolder;
+
+                            parentSolutionFolder.AddChild(solutionItem);
+                        }
+
+                        AddSolutionItem(solutionItem.Guid, solutionItem);
+                    }
+                }
+            }
+        }
+
+        private void LoadLegacy(bool allowAll)
         {
             var content = _fileSystem.File.ReadAllText(SolutionPath);
-            var parser = new Parser(content);
+            var parser = new LegacySolutionFileParser(content);
 
             var projects = parser.ParseProjects();
             var globalSections = parser.ParseGlobalSections();
 
             foreach (var p in projects)
             {
-                ProcessProject(p, allowAll);
+                ProcessProjectLegacySln(p, allowAll);
             }
 
             var nestedProjects = globalSections.FirstOrDefault(section => String.Equals(section.Name, "NestedProjects", StringComparison.OrdinalIgnoreCase));
@@ -192,8 +279,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
 
             foreach (var e in nestedProjects.Entries)
             {
-                if (Guid.TryParse(e.Value, out var parentGuid) && SolutionItems.TryGetValue(parentGuid, out var parent) && parent is SolutionFolder parentFolder
-                    && Guid.TryParse(e.Key, out var childGuid) && SolutionItems.TryGetValue(childGuid, out var child))
+                if (Guid.TryParse(e.Value, out var parentGuid) && _solutionItems.TryGetValue(parentGuid, out var parent) && parent is SolutionFolder parentFolder
+                    && Guid.TryParse(e.Key, out var childGuid) && _solutionItems.TryGetValue(childGuid, out var child))
                 {
                     parentFolder.AddChild(child);
                     child.Parent = parentFolder;
@@ -201,7 +288,7 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             }
         }
 
-        private void ProcessProject(SolutionParser.Model.SlnProject p, bool allowAll)
+        private void ProcessProjectLegacySln(SolutionParser.Model.LegacySlnProject p, bool allowAll)
         {
             SolutionItem solutionItem;
 
