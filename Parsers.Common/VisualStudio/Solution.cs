@@ -53,22 +53,8 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             SolutionPath = path;
             SolutionDirectory = _fileSystem.Path.GetDirectoryName(path);
 
-            if (Path.GetExtension(path).Equals(".slnx", StringComparison.OrdinalIgnoreCase))
-            {
-                IsSlnx = true;
-                LoadSlnx(allowAll);
-            }
-            else
-            {
-                LoadLegacy(allowAll);
-            }
+            LoadSolution(allowAll);
         }
-
-        /// <summary>
-        /// Gets a value indicating whether the solution is in SLNX format.
-        /// </summary>
-        /// <value><c>true</c> if the solution is in SLNX format; otherwise, <c>false</c>.</value>
-        public bool IsSlnx { get; }
 
         /// <summary>
         /// Gets the solution file path.
@@ -190,138 +176,84 @@ namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio
             _solutionItems[guid] = item;
         }
 
-        private void LoadSlnx(bool allowAll)
+        private void LoadSolution(bool allowAll)
         {
             ISolutionSerializer serializer = SolutionSerializers.GetSerializerByMoniker(SolutionPath);
             SolutionModel solution = serializer.OpenAsync(SolutionPath, CancellationToken.None).Result;
 
             Dictionary<string, SolutionFolder> solutionFolderMap = new Dictionary<string, SolutionFolder>(solution.SolutionFolders.Count);
 
-            if (solution.SolutionFolders?.Count > 0)
-            {
-
-                foreach (var folder in solution.SolutionFolders)
-                {
-                    SolutionFolder solutionFolder = new SolutionFolder(this, folder.Id, folder.ActualDisplayName, folder.Name);
-                    solutionFolderMap[folder.Name] = solutionFolder;
-
-                    if(folder.Files?.Count > 0)
-                    {
-                        // Add folder content.
-                        foreach (var file in folder.Files)
-                        {
-                            solutionFolder.AddFile(new SolutionFileEntry(this, file));
-                        }
-                    }
-
-                    AddSolutionItem(solutionFolder.Guid, solutionFolder);
-                }
-
-                foreach(var folder in solution.SolutionFolders)
-                {
-                    if(folder.Parent != null && solutionFolderMap.TryGetValue(folder.Parent.Name, out var parentFolder) && solutionFolderMap.TryGetValue(folder.Name, out var childFolder))
-                    {
-                        parentFolder.AddChild(childFolder);
-                        childFolder.Parent = parentFolder;
-                    }
-                }
-            }
-
-            if (solution.SolutionProjects?.Count > 0)
-            {
-                SolutionItem solutionItem;
-
-                foreach (var solutionProject in solution.SolutionProjects)
-                {
-                    if (allowAll || (solutionProject.TypeId == SolutionProjectTypeIDs.MsBuildProject || solutionProject.TypeId == SolutionProjectTypeIDs.NetCoreProject))
-                    {
-                        var p = new SolutionParser.Model.SlnProject(
-                            solutionProject.TypeId,
-                            solutionProject.ActualDisplayName,
-                            solutionProject.FilePath,
-                            solutionProject.Id);
-
-                        solutionItem = new ProjectInSolution(this, p);
-
-                        if (solutionProject.Parent is SolutionFolderModel parentFolder)
-                        {
-                            var parentSolutionFolder = solutionFolderMap[parentFolder.Name];
-
-                            solutionItem.Parent = parentSolutionFolder;
-
-                            parentSolutionFolder.AddChild(solutionItem);
-                        }
-
-                        AddSolutionItem(solutionItem.Guid, solutionItem);
-                    }
-                }
-            }
+            ProcessSolutionFolders(solution, solutionFolderMap);
+            ProcessSolutionProjects(solution, solutionFolderMap, allowAll);
         }
 
-        private void LoadLegacy(bool allowAll)
+        private void ProcessSolutionFolders(SolutionModel solution, Dictionary<string, SolutionFolder> solutionFolderMap)
         {
-            var content = _fileSystem.File.ReadAllText(SolutionPath);
-            var parser = new LegacySolutionFileParser(content);
-
-            var projects = parser.ParseProjects();
-            var globalSections = parser.ParseGlobalSections();
-
-            foreach (var p in projects)
-            {
-                ProcessProjectLegacySln(p, allowAll);
-            }
-
-            var nestedProjects = globalSections.FirstOrDefault(section => String.Equals(section.Name, "NestedProjects", StringComparison.OrdinalIgnoreCase));
-            if (nestedProjects == null)
+            if (solution.SolutionFolders?.Count == 0)
             {
                 return;
             }
 
-            foreach (var e in nestedProjects.Entries)
+            foreach (var folder in solution.SolutionFolders)
             {
-                if (Guid.TryParse(e.Value, out var parentGuid) && _solutionItems.TryGetValue(parentGuid, out var parent) && parent is SolutionFolder parentFolder
-                    && Guid.TryParse(e.Key, out var childGuid) && _solutionItems.TryGetValue(childGuid, out var child))
+                SolutionFolder solutionFolder = new SolutionFolder(this, folder.Id, folder.ActualDisplayName, folder.Name);
+                solutionFolderMap[folder.Id.ToString()] = solutionFolder;
+
+                if (folder.Files?.Count > 0)
                 {
-                    parentFolder.AddChild(child);
-                    child.Parent = parentFolder;
+                    // Add folder content.
+                    foreach (var file in folder.Files)
+                    {
+                        solutionFolder.AddFile(new SolutionFileEntry(this, file));
+                    }
+                }
+
+                AddSolutionItem(solutionFolder.Guid, solutionFolder);
+            }
+
+            foreach (var folder in solution.SolutionFolders)
+            {
+                if (folder.Parent != null && solutionFolderMap.TryGetValue(folder.Parent.Id.ToString(), out var parentFolder) && solutionFolderMap.TryGetValue(folder.Id.ToString(), out var childFolder))
+                {
+                    parentFolder.AddChild(childFolder);
+                    childFolder.Parent = parentFolder;
                 }
             }
         }
 
-        private void ProcessProjectLegacySln(SolutionParser.Model.LegacySlnProject p, bool allowAll)
+        private void ProcessSolutionProjects(SolutionModel solution, Dictionary<string, SolutionFolder> solutionFolderMap, bool allowAll)
         {
+            if (solution.SolutionProjects?.Count == 0)
+            {
+                return;
+            }
+
             SolutionItem solutionItem;
 
-            if (p.TypeGuid == SolutionProjectTypeIDs.SolutionFolder)
+            foreach (var solutionProject in solution.SolutionProjects)
             {
-                SolutionFolder solutionFolder = new SolutionFolder(this, p);
-                solutionItem = solutionFolder;
-
-                var solutionItemsSection = p.ProjectSections.FirstOrDefault(x => String.Equals(x.Name, "SolutionItems", StringComparison.OrdinalIgnoreCase));
-                if (solutionItemsSection != null)
+                if (allowAll || (solutionProject.TypeId == SolutionProjectTypeIDs.MsBuildProject || solutionProject.TypeId == SolutionProjectTypeIDs.NetCoreProject))
                 {
-                    foreach (var e in solutionItemsSection.Entries)
+                    var p = new SolutionParser.Model.SlnProject(
+                        solutionProject.TypeId,
+                        solutionProject.ActualDisplayName,
+                        solutionProject.FilePath,
+                        solutionProject.Id);
+
+                    solutionItem = new ProjectInSolution(this, p);
+
+                    if (solutionProject.Parent is SolutionFolderModel parentFolder)
                     {
-                        solutionFolder.AddFile(new SolutionFileEntry(this, e.Value));
+                        var parentSolutionFolder = solutionFolderMap[parentFolder.Id.ToString()];
+
+                        solutionItem.Parent = parentSolutionFolder;
+
+                        parentSolutionFolder.AddChild(solutionItem);
                     }
+
+                    AddSolutionItem(solutionItem.Guid, solutionItem);
                 }
             }
-            else if (allowAll)
-            {
-                // Allow all projects to be added
-                solutionItem = new ProjectInSolution(this, p);
-            }
-            else if (p.TypeGuid == SolutionProjectTypeIDs.MsBuildProject || p.TypeGuid == SolutionProjectTypeIDs.NetCoreProject)
-            {
-                // Allow only the C# projects that can be loaded with Project.Load
-                solutionItem = new ProjectInSolution(this, p);
-            }
-            else
-            {
-                return;
-            }
-
-            AddSolutionItem(solutionItem.Guid, solutionItem);
         }
     }
 }

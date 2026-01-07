@@ -196,8 +196,6 @@
 
         private void VerifySolution6(AutomationScriptSolution solution, string dir, string path, bool isSlnx)
         {
-            Assert.IsInstanceOfType(solution, typeof(AutomationScriptSolution));
-
             Assert.AreEqual(path, solution.SolutionPath);
             Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
 
@@ -220,9 +218,11 @@
             Assert.AreEqual(0, internalFolder.Files.Count());
             Assert.AreEqual(0, internalFolder.SubProjects.Count());
             Assert.AreEqual(1, internalFolder.SubFolders.Count());
+            Assert.IsNull(internalFolder.Parent);
 
             var scriptsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Scripts");
             Assert.IsNotNull(scriptsFolder);
+            Assert.IsNull(scriptsFolder.Parent);
             Assert.AreEqual("Scripts", scriptsFolder.RelativePath);
             Assert.AreEqual(Path.Combine(dir, "Scripts"), scriptsFolder.AbsolutePath);
 
@@ -248,7 +248,7 @@
 
             Assert.AreEqual(0, dllsFolder.Children.Count(), "Folder count");
             Assert.AreEqual(1, dllsFolder.Files.Count(), "File count");
-            Assert.AreEqual(0, dllsFolder.SubProjects.Count(), "SubpProject count");
+            Assert.AreEqual(0, dllsFolder.SubProjects.Count(), "SubProject count");
             Assert.AreEqual(0, dllsFolder.SubFolders.Count(), "Subfolder count");
 
             Assert.AreEqual("readme.txt", dllsFolder.Files.First().FileName);
@@ -266,7 +266,7 @@
 
             Assert.AreEqual(0, documentationFolder.Children.Count(), "Folder count");
             Assert.AreEqual(1, documentationFolder.Files.Count(), "File count");
-            Assert.AreEqual(0, documentationFolder.SubProjects.Count(), "SubpProject count");
+            Assert.AreEqual(0, documentationFolder.SubProjects.Count(), "SubProject count");
             Assert.AreEqual(0, documentationFolder.SubFolders.Count(), "Subfolder count");
 
             Assert.AreEqual("readme.txt", documentationFolder.Files.First().FileName);
@@ -284,7 +284,7 @@
 
             Assert.AreEqual(0, codeAnalysisFolder.Children.Count(), "Folder count");
             Assert.AreEqual(2, codeAnalysisFolder.Files.Count(), "File count");
-            Assert.AreEqual(0, codeAnalysisFolder.SubProjects.Count(), "SubpProject count");
+            Assert.AreEqual(0, codeAnalysisFolder.SubProjects.Count(), "SubProject count");
             Assert.AreEqual(0, codeAnalysisFolder.SubFolders.Count(), "Subfolder count");
 
             Assert.AreEqual("qaction-debug.ruleset", codeAnalysisFolder.Files.First().FileName);

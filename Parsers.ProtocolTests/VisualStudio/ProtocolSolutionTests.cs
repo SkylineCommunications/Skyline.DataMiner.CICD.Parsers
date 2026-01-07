@@ -214,5 +214,241 @@
             qa63000.Files[0].Code.Should().NotBeNullOrEmpty();
             qa63000.DllImports.Should().BeEquivalentTo(new[] { "System.dll" });
         }
+
+        [TestMethod]
+        public void ProtocolSolution_Solution2_Load_Legacy()
+        {
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution2"));
+            var path = FileSystem.Instance.Path.Combine(dir, "ConnectorProtocol.sln");
+
+            var solution = ProtocolSolution.Load(path);
+
+            ValidateSolution2(solution, dir, path, false);
+        }
+
+        [TestMethod]
+        public void ProtocolSolution_Solution2_Load_Slnx()
+        {
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var dir = FileSystem.Instance.Path.GetFullPath(FileSystem.Instance.Path.Combine(baseDir, @"VisualStudio\TestFiles\Protocol\Solution2"));
+            var path = FileSystem.Instance.Path.Combine(dir, "ConnectorProtocol.slnx");
+
+            var solution = ProtocolSolution.Load(path);
+
+            ValidateSolution2(solution, dir, path, true);
+        }
+
+        private static void ValidateSolution2(ProtocolSolution solution, string dir, string path, bool isSlnx)
+        {
+            Assert.AreEqual(path, solution.SolutionPath);
+            Assert.AreEqual(FileSystem.Instance.Path.GetDirectoryName(path), solution.SolutionDirectory);
+
+            solution.Should().NotBeNull();
+            solution.SolutionPath.Should().BeEquivalentTo(path);
+            solution.SolutionDirectory.Should().BeEquivalentTo(FileSystem.Instance.Path.GetDirectoryName(path));
+
+            solution.Folders.Should().HaveCount(8);
+            solution.Projects.Should().HaveCount(3);
+            solution.QActions.Should().HaveCount(2);
+
+            // Validate folders.
+
+            // Default templates
+            var defaultTemplatesFolder = solution.Folders.FirstOrDefault(f => f.Name == "DefaultTemplates");
+            Assert.IsNotNull(defaultTemplatesFolder);
+            Assert.AreEqual("DefaultTemplates", defaultTemplatesFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "DefaultTemplates"), defaultTemplatesFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("F2683535-3B81-4454-9E99-120E5016BBCE"), defaultTemplatesFolder.Guid);
+            }
+
+            Assert.AreEqual(0, defaultTemplatesFolder.Children.Count());
+            Assert.AreEqual(1, defaultTemplatesFolder.Files.Count());
+            Assert.AreEqual(0, defaultTemplatesFolder.SubProjects.Count());
+            Assert.AreEqual(0, defaultTemplatesFolder.SubFolders.Count());
+            Assert.IsNull(defaultTemplatesFolder.Parent);
+
+            Assert.AreEqual("ABOUT.md", defaultTemplatesFolder.Files.First().FileName);
+            Assert.AreEqual(Path.Combine(dir, "DefaultTemplates", "ABOUT.md"), defaultTemplatesFolder.Files.First().AbsolutePath);
+
+            // Dlls
+            var dllsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Dlls");
+            Assert.IsNotNull(dllsFolder);
+            Assert.AreEqual("Dlls", dllsFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "Dlls"), dllsFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("90DE9AD7-DBA6-4B7D-A7E4-24CCE0BC4974"), dllsFolder.Guid);
+            }
+
+            Assert.AreEqual(0, dllsFolder.Children.Count());
+            Assert.AreEqual(1, dllsFolder.Files.Count());
+            Assert.AreEqual(0, dllsFolder.SubProjects.Count());
+            Assert.AreEqual(0, dllsFolder.SubFolders.Count());
+            Assert.IsNull(dllsFolder.Parent);
+
+            Assert.AreEqual("ABOUT.md", dllsFolder.Files.First().FileName);
+            Assert.AreEqual(Path.Combine(dir, "Dlls", "ABOUT.md"), dllsFolder.Files.First().AbsolutePath);
+
+            // Documentation
+            var documentationFolder = solution.Folders.FirstOrDefault(f => f.Name == "Documentation");
+            Assert.IsNotNull(documentationFolder);
+            Assert.AreEqual("Documentation", documentationFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "Documentation"), documentationFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("C8CFB314-FE32-4349-931A-3C8A791E6918"), documentationFolder.Guid);
+            }
+
+            Assert.AreEqual(0, documentationFolder.Children.Count());
+            Assert.AreEqual(1, documentationFolder.Files.Count());
+            Assert.AreEqual(0, documentationFolder.SubProjects.Count());
+            Assert.AreEqual(0, documentationFolder.SubFolders.Count());
+            Assert.IsNull(documentationFolder.Parent);
+
+            Assert.AreEqual("ABOUT.md", documentationFolder.Files.First().FileName);
+            Assert.AreEqual(Path.Combine(dir, "Documentation", "ABOUT.md"), documentationFolder.Files.First().AbsolutePath);
+
+            // Internal folder.
+            var internalFolder = solution.Folders.FirstOrDefault(f => f.Name == "Internal");
+            Assert.IsNotNull(internalFolder);
+            Assert.AreEqual("Internal", internalFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("E7F6E438-D81A-48C5-BC6A-2781DD80ED98"), internalFolder.Guid);
+            }
+
+            Assert.AreEqual(2, internalFolder.Children.Count());
+            Assert.AreEqual(1, internalFolder.Files.Count());
+            Assert.AreEqual(1, internalFolder.SubProjects.Count());
+            Assert.AreEqual(1, internalFolder.SubFolders.Count());
+            Assert.IsNull(internalFolder.Parent);
+
+            Assert.AreEqual(".editorconfig", internalFolder.Files.First().FileName);
+            Assert.AreEqual(Path.Combine(dir, "Internal", ".editorconfig"), internalFolder.Files.First().AbsolutePath);
+
+            // Code Analysis folder.
+            var codeAnalysisFolder = solution.Folders.FirstOrDefault(f => f.Name == "Code Analysis");
+            Assert.IsNotNull(codeAnalysisFolder);
+            Assert.AreEqual("Code Analysis", codeAnalysisFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "Code Analysis"), codeAnalysisFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("90450ED1-ADC3-4799-8BCE-4C53BF325954"), codeAnalysisFolder.Guid);
+            }
+
+            Assert.AreEqual(0, codeAnalysisFolder.Children.Count());
+            Assert.AreEqual(3, codeAnalysisFolder.Files.Count());
+            Assert.AreEqual(0, codeAnalysisFolder.SubProjects.Count());
+            Assert.AreEqual(0, codeAnalysisFolder.SubFolders.Count());
+            Assert.AreEqual(internalFolder, codeAnalysisFolder.Parent);
+
+            codeAnalysisFolder.Files.Select(f => f.FileName).Should().BeEquivalentTo(new[] { "qaction-debug.ruleset", "qaction-release.ruleset", "stylecop.json" });
+            codeAnalysisFolder.Files.Select(f => f.AbsolutePath).Should().BeEquivalentTo(new[] { Path.Combine(dir, "Internal", "Code Analysis", "qaction-debug.ruleset"), Path.Combine(dir, "Internal", "Code Analysis", "qaction-release.ruleset"), Path.Combine(dir, "Internal", "Code Analysis", "stylecop.json") });
+
+            // QActions folder.
+            var qactionsFolder = solution.Folders.FirstOrDefault(f => f.Name == "QActions");
+            Assert.IsNotNull(qactionsFolder);
+            Assert.AreEqual("QActions", qactionsFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "QActions"), qactionsFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("54BF0CEF-E654-4409-A2DD-89208EFA9EC3"), qactionsFolder.Guid);
+            }
+
+            Assert.AreEqual(2, qactionsFolder.Children.Count());
+            Assert.AreEqual(0, qactionsFolder.Files.Count());
+            Assert.AreEqual(2, qactionsFolder.SubProjects.Count());
+            Assert.AreEqual(0, qactionsFolder.SubFolders.Count());
+            Assert.IsNull(qactionsFolder.Parent);
+
+
+            // QAction Helper project.
+            var qactionHelperProject = solution.Projects.FirstOrDefault(p => p.Name == "QAction_Helper");
+            Assert.AreEqual("QAction_Helper", qactionHelperProject.Name);
+            Assert.AreEqual(@"QAction_Helper\QAction_Helper.csproj", qactionHelperProject.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, @"QAction_Helper\QAction_Helper.csproj"), qactionHelperProject.AbsolutePath);
+            Assert.AreEqual("Internal", qactionHelperProject.Parent.Name);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("3EB9EC9E-FF7B-413E-815A-8E95C3FA1288"), qactionHelperProject.Guid);
+            }
+
+            // QAction 1 project.
+            var qaction1Project = solution.Projects.FirstOrDefault(p => p.Name == "QAction_1");
+            Assert.AreEqual("QAction_1", qaction1Project.Name);
+            Assert.AreEqual(@"QAction_1\QAction_1.csproj", qaction1Project.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, @"QAction_1\QAction_1.csproj"), qaction1Project.AbsolutePath);
+            Assert.AreEqual("QActions", qaction1Project.Parent.Name);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("8C97F61C-5539-4DA1-8300-FB2344477E4F"), qaction1Project.Guid);
+            }
+
+            // QAction 2 project.
+            var qaction2Project = solution.Projects.FirstOrDefault(p => p.Name == "QAction_2");
+            Assert.AreEqual("QAction_2", qaction2Project.Name);
+            Assert.AreEqual(@"QAction_2\QAction_2.csproj", qaction2Project.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, @"QAction_2\QAction_2.csproj"), qaction2Project.AbsolutePath);
+            Assert.AreEqual("QActions", qaction2Project.Parent.Name);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("A9E60CEE-A56A-40E0-A721-0E5DE80C8283"), qaction2Project.Guid);
+            }
+
+            // Solution items folder.
+            var solutionItemsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Solution Items");
+            Assert.IsNotNull(solutionItemsFolder);
+            Assert.IsNull(solutionItemsFolder.Parent);
+            Assert.AreEqual("Solution Items", solutionItemsFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "Solution Items"), solutionItemsFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("6A4869CC-64F1-4C38-8C6E-BD47DCAE0EFE"), solutionItemsFolder.Guid);
+            }
+
+            Assert.AreEqual(0, solutionItemsFolder.Children.Count(), "Children");
+            Assert.AreEqual(1, solutionItemsFolder.Files.Count(), "Files");
+            Assert.AreEqual(0, solutionItemsFolder.SubProjects.Count(), "Subprojects");
+            Assert.AreEqual(0, solutionItemsFolder.SubFolders.Count(), "Subfolders");
+
+            Assert.AreEqual("protocol.xml", solutionItemsFolder.Files.First().FileName);
+            Assert.AreEqual(Path.Combine(dir, "protocol.xml"), solutionItemsFolder.Files.First().AbsolutePath);
+
+            // Tests folder.
+            var testsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Tests");
+            Assert.IsNotNull(testsFolder);
+            Assert.IsNull(testsFolder.Parent);
+            Assert.AreEqual("Tests", testsFolder.RelativePath);
+            Assert.AreEqual(Path.Combine(dir, "Tests"), testsFolder.AbsolutePath);
+
+            if (!isSlnx)
+            {
+                Assert.AreEqual(Guid.Parse("146EC742-12C2-4E1F-85BB-C4C33A69B8A3"), testsFolder.Guid);
+            }
+
+            Assert.AreEqual(0, testsFolder.Children.Count(), "Children");
+            Assert.AreEqual(0, testsFolder.Files.Count(), "Files");
+            Assert.AreEqual(0, testsFolder.SubProjects.Count(), "Subprojects");
+            Assert.AreEqual(0, testsFolder.SubFolders.Count(), "Subfolders");
+
+
+            // Verify folder structure
+            Assert.AreEqual(codeAnalysisFolder, internalFolder.Children.First());
+            Assert.AreEqual(codeAnalysisFolder, internalFolder.SubFolders.First());
+        }
     }
 }
