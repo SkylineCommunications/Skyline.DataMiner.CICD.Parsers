@@ -29,13 +29,12 @@
         [AssemblyCleanup]
         public static void AssemblyCleanup()
         {
-            var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var baseDir = FileSystem.Instance.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             // TODO: Add GetDirectories to FileSystem
             foreach (var testFilesDirectories in Directory.GetDirectories(baseDir, "TestFiles", SearchOption.AllDirectories))
             {
-                // TODO: Add Delete to FileSystem (with recursive option)
-                Directory.Delete(testFilesDirectories, true);
+                FileSystem.Instance.Directory.Delete(testFilesDirectories, true);
             }
         }
     }

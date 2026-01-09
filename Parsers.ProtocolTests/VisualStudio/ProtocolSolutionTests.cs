@@ -1,7 +1,6 @@
 ﻿namespace Parsers.ProtocolTests.VisualStudio
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
 
@@ -54,7 +53,7 @@
             var internalFolder = solution.Folders.FirstOrDefault(f => f.Name == "Internal");
             Assert.IsNotNull(internalFolder);
             Assert.AreEqual("Internal", internalFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -70,7 +69,7 @@
             Assert.AreEqual("QAction_Helper", internalFolder.Children.First().Name);
 
             Assert.AreEqual("QAction_Helper", internalFolder.SubProjects.First().Name);
-            Assert.AreEqual(Path.Combine(dir, "QAction_Helper", "QAction_Helper.csproj"), internalFolder.SubProjects.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QAction_Helper", "QAction_Helper.csproj"), internalFolder.SubProjects.First().AbsolutePath);
             Assert.AreEqual(@"QAction_Helper\QAction_Helper.csproj", internalFolder.SubProjects.First().RelativePath);
             Assert.AreEqual(internalFolder, internalFolder.SubProjects.First().Parent);
 
@@ -84,7 +83,7 @@
             Assert.IsNotNull(qactionsFolder);
             Assert.IsNull(qactionsFolder.Parent);
             Assert.AreEqual("QActions", qactionsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "QActions"), qactionsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QActions"), qactionsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -95,13 +94,11 @@
             Assert.AreEqual(0, qactionsFolder.Files.Count());
             Assert.AreEqual(4, qactionsFolder.SubProjects.Count());
             Assert.AreEqual(0, qactionsFolder.SubFolders.Count());
-
-            var qactionProjects = qactionsFolder.SubProjects.ToList();
-
+            
             var qaction1 = solution.Projects.FirstOrDefault(p => p.Name == "QAction_1");
 
             Assert.IsNotNull(qaction1);
-            Assert.AreEqual(Path.Combine(dir, "QAction_1", "QAction_1.csproj"), qaction1.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QAction_1", "QAction_1.csproj"), qaction1.AbsolutePath);
             Assert.AreEqual(@"QAction_1\QAction_1.csproj", qaction1.RelativePath);
             Assert.AreEqual(qactionsFolder, qaction1.Parent);
 
@@ -113,7 +110,7 @@
             var qaction2 = solution.Projects.FirstOrDefault(p => p.Name == "QAction_2");
 
             Assert.IsNotNull(qaction2);
-            Assert.AreEqual(Path.Combine(dir, "QAction_2", "QAction_2.csproj"), qaction2.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QAction_2", "QAction_2.csproj"), qaction2.AbsolutePath);
             Assert.AreEqual(@"QAction_2\QAction_2.csproj", qaction2.RelativePath);
             Assert.AreEqual(qactionsFolder, qaction2.Parent);
 
@@ -126,7 +123,7 @@
 
             Assert.IsNotNull(qaction3);
             Assert.AreEqual("QAction_3", qaction3.Name);
-            Assert.AreEqual(Path.Combine(dir, "QAction_3", "QAction_3.csproj"), qaction3.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QAction_3", "QAction_3.csproj"), qaction3.AbsolutePath);
             Assert.AreEqual(@"QAction_3\QAction_3.csproj", qaction3.RelativePath);
             Assert.AreEqual(qactionsFolder, qaction3.Parent);
 
@@ -139,7 +136,7 @@
 
             Assert.IsNotNull(qaction63000);
             Assert.AreEqual("QAction_63000", qaction63000.Name);
-            Assert.AreEqual(Path.Combine(dir, "QAction_63000", "QAction_63000.csproj"), qaction63000.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QAction_63000", "QAction_63000.csproj"), qaction63000.AbsolutePath);
             Assert.AreEqual(@"QAction_63000\QAction_63000.csproj", qaction63000.RelativePath);
             Assert.AreEqual(qactionsFolder, qaction63000.Parent);
 
@@ -153,7 +150,7 @@
             Assert.IsNotNull(solutionItemsFolder);
             Assert.IsNull(solutionItemsFolder.Parent);
             Assert.AreEqual("Solution Items", solutionItemsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Solution Items"), solutionItemsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Solution Items"), solutionItemsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -166,13 +163,13 @@
             Assert.AreEqual(0, solutionItemsFolder.SubFolders.Count(), "Subfolders");
 
             Assert.AreEqual("protocol.xml", solutionItemsFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "protocol.xml"), solutionItemsFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "protocol.xml"), solutionItemsFolder.Files.First().AbsolutePath);
 
             // Check test project.
             var testProject = solution.Projects.FirstOrDefault(p => p.Name == "QAction_3Tests");
             Assert.IsNotNull(testProject);
             Assert.AreEqual("QAction_3Tests", testProject.Name);
-            Assert.AreEqual(Path.Combine(dir, "QAction_3Tests", "QAction_3Tests.csproj"), testProject.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QAction_3Tests", "QAction_3Tests.csproj"), testProject.AbsolutePath);
             Assert.AreEqual(@"QAction_3Tests\QAction_3Tests.csproj", testProject.RelativePath);
             Assert.IsNull(testProject.Parent);
 
@@ -258,7 +255,7 @@
             var defaultTemplatesFolder = solution.Folders.FirstOrDefault(f => f.Name == "DefaultTemplates");
             Assert.IsNotNull(defaultTemplatesFolder);
             Assert.AreEqual("DefaultTemplates", defaultTemplatesFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "DefaultTemplates"), defaultTemplatesFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "DefaultTemplates"), defaultTemplatesFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -272,13 +269,13 @@
             Assert.IsNull(defaultTemplatesFolder.Parent);
 
             Assert.AreEqual("ABOUT.md", defaultTemplatesFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "DefaultTemplates", "ABOUT.md"), defaultTemplatesFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "DefaultTemplates", "ABOUT.md"), defaultTemplatesFolder.Files.First().AbsolutePath);
 
             // Dlls
             var dllsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Dlls");
             Assert.IsNotNull(dllsFolder);
             Assert.AreEqual("Dlls", dllsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Dlls"), dllsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Dlls"), dllsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -292,13 +289,13 @@
             Assert.IsNull(dllsFolder.Parent);
 
             Assert.AreEqual("ABOUT.md", dllsFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Dlls", "ABOUT.md"), dllsFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Dlls", "ABOUT.md"), dllsFolder.Files.First().AbsolutePath);
 
             // Documentation
             var documentationFolder = solution.Folders.FirstOrDefault(f => f.Name == "Documentation");
             Assert.IsNotNull(documentationFolder);
             Assert.AreEqual("Documentation", documentationFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Documentation"), documentationFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Documentation"), documentationFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -312,13 +309,13 @@
             Assert.IsNull(documentationFolder.Parent);
 
             Assert.AreEqual("ABOUT.md", documentationFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Documentation", "ABOUT.md"), documentationFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Documentation", "ABOUT.md"), documentationFolder.Files.First().AbsolutePath);
 
             // Internal folder.
             var internalFolder = solution.Folders.FirstOrDefault(f => f.Name == "Internal");
             Assert.IsNotNull(internalFolder);
             Assert.AreEqual("Internal", internalFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -332,13 +329,13 @@
             Assert.IsNull(internalFolder.Parent);
 
             Assert.AreEqual(".editorconfig", internalFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Internal", ".editorconfig"), internalFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Internal", ".editorconfig"), internalFolder.Files.First().AbsolutePath);
 
             // Code Analysis folder.
             var codeAnalysisFolder = solution.Folders.FirstOrDefault(f => f.Name == "Code Analysis");
             Assert.IsNotNull(codeAnalysisFolder);
             Assert.AreEqual("Code Analysis", codeAnalysisFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Code Analysis"), codeAnalysisFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Code Analysis"), codeAnalysisFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -352,13 +349,13 @@
             Assert.AreEqual(internalFolder, codeAnalysisFolder.Parent);
 
             codeAnalysisFolder.Files.Select(f => f.FileName).Should().BeEquivalentTo(new[] { "qaction-debug.ruleset", "qaction-release.ruleset", "stylecop.json" });
-            codeAnalysisFolder.Files.Select(f => f.AbsolutePath).Should().BeEquivalentTo(new[] { Path.Combine(dir, "Internal", "Code Analysis", "qaction-debug.ruleset"), Path.Combine(dir, "Internal", "Code Analysis", "qaction-release.ruleset"), Path.Combine(dir, "Internal", "Code Analysis", "stylecop.json") });
+            codeAnalysisFolder.Files.Select(f => f.AbsolutePath).Should().BeEquivalentTo(new[] { FileSystem.Instance.Path.Combine(dir, "Internal", "Code Analysis", "qaction-debug.ruleset"), FileSystem.Instance.Path.Combine(dir, "Internal", "Code Analysis", "qaction-release.ruleset"), FileSystem.Instance.Path.Combine(dir, "Internal", "Code Analysis", "stylecop.json") });
 
             // QActions folder.
             var qactionsFolder = solution.Folders.FirstOrDefault(f => f.Name == "QActions");
             Assert.IsNotNull(qactionsFolder);
             Assert.AreEqual("QActions", qactionsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "QActions"), qactionsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "QActions"), qactionsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -370,13 +367,12 @@
             Assert.AreEqual(2, qactionsFolder.SubProjects.Count());
             Assert.AreEqual(0, qactionsFolder.SubFolders.Count());
             Assert.IsNull(qactionsFolder.Parent);
-
-
+            
             // QAction Helper project.
             var qactionHelperProject = solution.Projects.FirstOrDefault(p => p.Name == "QAction_Helper");
             Assert.AreEqual("QAction_Helper", qactionHelperProject.Name);
             Assert.AreEqual(@"QAction_Helper\QAction_Helper.csproj", qactionHelperProject.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, @"QAction_Helper\QAction_Helper.csproj"), qactionHelperProject.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, @"QAction_Helper\QAction_Helper.csproj"), qactionHelperProject.AbsolutePath);
             Assert.AreEqual("Internal", qactionHelperProject.Parent.Name);
 
             if (!isSlnx)
@@ -388,7 +384,7 @@
             var qaction1Project = solution.Projects.FirstOrDefault(p => p.Name == "QAction_1");
             Assert.AreEqual("QAction_1", qaction1Project.Name);
             Assert.AreEqual(@"QAction_1\QAction_1.csproj", qaction1Project.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, @"QAction_1\QAction_1.csproj"), qaction1Project.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, @"QAction_1\QAction_1.csproj"), qaction1Project.AbsolutePath);
             Assert.AreEqual("QActions", qaction1Project.Parent.Name);
 
             if (!isSlnx)
@@ -400,7 +396,7 @@
             var qaction2Project = solution.Projects.FirstOrDefault(p => p.Name == "QAction_2");
             Assert.AreEqual("QAction_2", qaction2Project.Name);
             Assert.AreEqual(@"QAction_2\QAction_2.csproj", qaction2Project.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, @"QAction_2\QAction_2.csproj"), qaction2Project.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, @"QAction_2\QAction_2.csproj"), qaction2Project.AbsolutePath);
             Assert.AreEqual("QActions", qaction2Project.Parent.Name);
 
             if (!isSlnx)
@@ -413,7 +409,7 @@
             Assert.IsNotNull(solutionItemsFolder);
             Assert.IsNull(solutionItemsFolder.Parent);
             Assert.AreEqual("Solution Items", solutionItemsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Solution Items"), solutionItemsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Solution Items"), solutionItemsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -426,14 +422,14 @@
             Assert.AreEqual(0, solutionItemsFolder.SubFolders.Count(), "Subfolders");
 
             Assert.AreEqual("protocol.xml", solutionItemsFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "protocol.xml"), solutionItemsFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "protocol.xml"), solutionItemsFolder.Files.First().AbsolutePath);
 
             // Tests folder.
             var testsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Tests");
             Assert.IsNotNull(testsFolder);
             Assert.IsNull(testsFolder.Parent);
             Assert.AreEqual("Tests", testsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Tests"), testsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Tests"), testsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -444,8 +440,7 @@
             Assert.AreEqual(0, testsFolder.Files.Count(), "Files");
             Assert.AreEqual(0, testsFolder.SubProjects.Count(), "Subprojects");
             Assert.AreEqual(0, testsFolder.SubFolders.Count(), "Subfolders");
-
-
+            
             // Verify folder structure
             Assert.AreEqual(codeAnalysisFolder, internalFolder.Children.First());
             Assert.AreEqual(codeAnalysisFolder, internalFolder.SubFolders.First());

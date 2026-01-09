@@ -1,11 +1,8 @@
 ﻿namespace Parsers.AutomationTests.VisualStudio
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-
-    using Alphaleonis.Win32.Filesystem;
 
     using FluentAssertions;
 
@@ -14,7 +11,6 @@
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Automation.VisualStudio;
     using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
-    using Skyline.DataMiner.CICD.Parsers.Common.VisualStudio;
 
     using Path = System.IO.Path;
 
