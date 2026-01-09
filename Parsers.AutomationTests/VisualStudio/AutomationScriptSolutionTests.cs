@@ -11,9 +11,7 @@
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.Parsers.Automation.VisualStudio;
     using Skyline.DataMiner.CICD.Parsers.Common.Exceptions;
-
-    using Path = System.IO.Path;
-
+    
     [TestClass]
     public class AutomationScriptSolutionTests
     {
@@ -203,7 +201,7 @@
             var internalFolder = solution.Folders.FirstOrDefault(f => f.Name == "Internal");
             Assert.IsNotNull(internalFolder);
             Assert.AreEqual("Internal", internalFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Internal"), internalFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -220,7 +218,7 @@
             Assert.IsNotNull(scriptsFolder);
             Assert.IsNull(scriptsFolder.Parent);
             Assert.AreEqual("Scripts", scriptsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Scripts"), scriptsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Scripts"), scriptsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -235,7 +233,7 @@
             var dllsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Dlls");
             Assert.IsNotNull(dllsFolder);
             Assert.AreEqual("Dlls", dllsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Dlls"), dllsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Dlls"), dllsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -248,12 +246,12 @@
             Assert.AreEqual(0, dllsFolder.SubFolders.Count(), "Subfolder count");
 
             Assert.AreEqual("readme.txt", dllsFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Dlls", "readme.txt"), dllsFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Dlls", "readme.txt"), dllsFolder.Files.First().AbsolutePath);
 
             var documentationFolder = solution.Folders.FirstOrDefault(f => f.Name == "Documentation");
             Assert.IsNotNull(documentationFolder);
             Assert.AreEqual("Documentation", documentationFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Documentation"), documentationFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Documentation"), documentationFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -266,12 +264,12 @@
             Assert.AreEqual(0, documentationFolder.SubFolders.Count(), "Subfolder count");
 
             Assert.AreEqual("readme.txt", documentationFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Documentation", "readme.txt"), documentationFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Documentation", "readme.txt"), documentationFolder.Files.First().AbsolutePath);
 
             var codeAnalysisFolder = solution.Folders.FirstOrDefault(f => f.Name == "Code Analysis");
             Assert.IsNotNull(codeAnalysisFolder);
             Assert.AreEqual("Code Analysis", codeAnalysisFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Code Analysis"), codeAnalysisFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Code Analysis"), codeAnalysisFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -284,12 +282,12 @@
             Assert.AreEqual(0, codeAnalysisFolder.SubFolders.Count(), "Subfolder count");
 
             Assert.AreEqual("qaction-debug.ruleset", codeAnalysisFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Internal", "Code Analysis", "qaction-debug.ruleset"), codeAnalysisFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Internal", "Code Analysis", "qaction-debug.ruleset"), codeAnalysisFolder.Files.First().AbsolutePath);
 
             var clearableAlarmsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Clearable Alarms");
             Assert.IsNotNull(clearableAlarmsFolder);
             Assert.AreEqual("Clearable Alarms", clearableAlarmsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Clearable Alarms"), clearableAlarmsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Clearable Alarms"), clearableAlarmsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -302,12 +300,12 @@
             Assert.AreEqual(1, clearableAlarmsFolder.SubFolders.Count());
 
             Assert.AreEqual("Clearable Alarms.xml", clearableAlarmsFolder.Files.First().FileName);
-            Assert.AreEqual(Path.Combine(dir, "Clearable Alarms.xml"), clearableAlarmsFolder.Files.First().AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Clearable Alarms.xml"), clearableAlarmsFolder.Files.First().AbsolutePath);
 
             var actionsFolder = solution.Folders.FirstOrDefault(f => f.Name == "Actions");
             Assert.IsNotNull(actionsFolder);
             Assert.AreEqual("Actions", actionsFolder.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, "Actions"), actionsFolder.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, "Actions"), actionsFolder.AbsolutePath);
 
             if (!isSlnx)
             {
@@ -322,7 +320,7 @@
             var project1 = solution.Projects.FirstOrDefault(p => p.Name == "Clearable Alarms_1");
             Assert.AreEqual("Clearable Alarms_1", project1.Name);
             Assert.AreEqual(@"Clearable Alarms_1\Clearable Alarms_1.csproj", project1.RelativePath);
-            Assert.AreEqual(Path.Combine(dir, @"Clearable Alarms_1\Clearable Alarms_1.csproj"), project1.AbsolutePath);
+            Assert.AreEqual(FileSystem.Instance.Path.Combine(dir, @"Clearable Alarms_1\Clearable Alarms_1.csproj"), project1.AbsolutePath);
             Assert.AreEqual("Actions", project1.Parent.Name);
 
             // Verify folder structure
