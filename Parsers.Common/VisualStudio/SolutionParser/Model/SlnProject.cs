@@ -1,7 +1,6 @@
 ﻿namespace Skyline.DataMiner.CICD.Parsers.Common.VisualStudio.SolutionParser.Model
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a project in a solution file.
@@ -46,11 +45,5 @@
         /// </summary>
         /// <value>The project path.</value>
         public string Path { get; }
-
-        /// <summary>
-        /// Gets the project sections.
-        /// </summary>
-        /// <value>The project sections.</value>
-        public ICollection<SlnProjectSection> ProjectSections { get; } = new List<SlnProjectSection>();
     }
 }
